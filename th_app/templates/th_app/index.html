@@ -1,0 +1,91 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Inicio | Talking Hands{% endblock %}
+
+{% block content %}
+<!-- Sección Hero -->
+<section class="hero-section">
+  <div class="hero-container">
+    <div class="hero-content">
+      <div class="badge-colombia">
+        <span class="flag">🇨🇴</span>
+        <span>100% Colombiano</span>
+      </div>
+
+      <h1 class="hero-title">
+        Aprende Lengua de Señas Colombiana de forma divertida
+      </h1>
+
+      <p class="hero-description">
+        Domina el abecedario, saludos y vocabulario cotidiano con lecciones interactivas, desafíos de racha diaria y práctica lúdica.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#comenzar" class="btn btn-primary btn-lg">Comenzar gratis</a>
+        <a href="#mas-info" class="btn btn-outline btn-lg">Saber más</a>
+      </div>
+    </div>
+
+    <div class="hero-media">
+      <div class="hero-image-card">
+        <!-- Reemplaza la ruta por tu archivo estático correspondiente -->
+        <img src="{% static 'img/hero-illustration.png' %}" alt="Ilustración de aprendizaje Talking Hands" class="hero-img">
+        <div class="image-action-badge left">
+          <i data-lucide="hand"></i>
+        </div>
+        <div class="image-action-badge right">
+          <i data-lucide="rotate-ccw"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sección Características / Beneficios -->
+<section class="features-section">
+  <div class="features-container">
+    <div class="section-header">
+      <h2 class="section-title">¿Por qué aprender con Talking Hands?</h2>
+      <p class="section-subtitle">
+        Nuestra metodología lúdica hace que incorporar el aprendizaje sea natural, continuo y efectivo.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Card 1 -->
+      <article class="feature-card">
+        <div class="feature-icon">
+          <i data-lucide="gamepad-2"></i>
+        </div>
+        <h3 class="feature-title">Gamificación</h3>
+        <p class="feature-text">
+          Suma puntos de experiencia (XP), completa misiones, mantén tu racha diaria y compite amistosamente en ligas de aprendizaje.
+        </p>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="feature-card">
+        <div class="feature-icon">
+          <i data-lucide="layers"></i>
+        </div>
+        <h3 class="feature-title">Lecciones interactivas</h3>
+        <p class="feature-text">
+          Aprende de forma visual y táctil con videos nativos en LSC, retos de selección múltiple y arrastrar y soltar.
+        </p>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="feature-card">
+        <div class="feature-icon">
+          <i data-lucide="message-square-code"></i>
+        </div>
+        <h3 class="feature-title">Aprende por temáticas</h3>
+        <p class="feature-text">
+          Explora diferentes módulos organizados por temas y avanza según tu ritmo.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "th_app/base.html" %}
+
+{% block title %}Iniciar Sesión | Talking Hands{% endblock %}
+
+{% block content %}
+<div style="max-width: 420px; margin: 3rem auto; background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.06);">
+    <h2 style="margin-bottom: 1.5rem; text-align: center; color: var(--dark);">Iniciar Sesión</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 1.2rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Usuario:</label>
+            <input type="text" name="username" required style="width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Contraseña:</label>
+            <input type="password" name="password" required style="width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;">
+        </div>
+
+        <button type="submit" class="btn btn-solid" style="width: 100%; padding: 0.75rem;">Ingresar</button>
+    </form>
+
+    <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+        ¿No tienes cuenta? <a href="{% url 'registro' %}" style="color: var(--primary); font-weight: bold;">Regístrate aquí</a>
+    </p>
+</div>
+{% endblock %}

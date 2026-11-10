@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Talking Hands{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'th_app/css/styles.css' %}">
+</head>
+
+<header class="main-header">
+    <div class="nav-container">
+        <!-- Logo principal -->
+        <a href="{% if user.is_authenticated %}{% url 'dashboard_aprendiz' %}{% else %}/{% endif %}" class="brand-logo">
+            🤟 Talking<span>Hands</span>
+        </a>
+
+        <!-- Header dinámico según sesión -->
+        <nav>
+            {% if user.is_authenticated %}
+                <!-- HEADER 1: USUARIO AUTENTICADO (APRENDIZ) -->
+                <ul class="nav-links">
+                    <li>
+                        <a href="{% url 'dashboard_aprendiz' %}">Ruta</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'diccionario_sennas' %}">Diccionario LSC</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'perfil_y_ranking' %}">Ranking</a>
+                    </li>
+                        
+                    <!-- Puntos XP del Perfil actual -->
+                    {% if user.perfil %}
+                        <li>
+                            <span class="xp-pill">⚡ {{ user.perfil.puntos_xp }} XP</span>
+                        </li>
+                    {% endif %}
+
+                    <li>
+                        <a href="{% url 'perfil_y_ranking' %}">
+                            <strong>{{ user.username }}</strong>
+                        </a>
+                    </li>
+
+                    <!-- Botón para cerrar sesión vía POST -->
+                    <li>
+                        <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-logout">Salir</button>
+                        </form>
+                    </li>
+                </ul>
+            {% else %}
+                <!-- HEADER 2: USUARIO NO AUTENTICADO (VISITANTE) -->
+                <ul class="nav-links">
+                    <li>
+                        <a href="{% url 'login' %}" class="btn btn-outline">Iniciar sesión</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'registro' %}" class="btn btn-solid">Registrarse</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+<main class="content-area">
+    {% block content %}
+    {% endblock %}
+</main>
+
+
+</body>
+</html>
