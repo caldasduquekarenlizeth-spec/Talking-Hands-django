@@ -1,0 +1,82 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Crear Perfil - Talking Hands{% endblock %}
+
+{% block content %}
+<!-- Navbar Superior -->
+<header class="header-navbar">
+    <div class="marca">
+        <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
+        <span>Talking Hands</span>
+    </div>
+
+    <nav class="nav-links">
+        <a href="{% url 'listar_perfiles' %}" class="nav-item">Inicio</a>
+        <a href="{% url 'listar_perfiles' %}" class="nav-item active">Usuarios</a>
+        <a href="#" class="nav-item">Perfil</a>
+        <a href="#" class="nav-item">Ranking</a>
+    </nav>
+
+    <div class="nav-iconos">
+        <button class="btn-campana">🔔</button>
+        <div class="user-avatar-nav">TH</div>
+    </div>
+</header>
+
+<!-- Contenedor Principal del Formulario -->
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'listar_perfiles' %}" class="btn-volver">← Volver a usuarios</a>
+        <h1>{{ titulo }}</h1>
+        <p>Ingresa la información del usuario.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container">
+        <form method="POST" class="form-crear-perfil">
+            {% csrf_token %}
+
+            <div class="grupo-campo">
+                <label for="{{ form.nombre.id_for_label }}">Nombre</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                    <span class="error-texto">{{ form.nombre.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.email.id_for_label }}">Correo Electrónico</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <span class="error-texto">{{ form.email.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grid-dos-columnas">
+                <div class="grupo-campo">
+                    <label for="{{ form.puntos_xp.id_for_label }}">Puntos XP Iniciales</label>
+                    {{ form.puntos_xp }}
+                    {% if form.puntos_xp.errors %}
+                        <span class="error-texto">{{ form.puntos_xp.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ form.rol.id_for_label }}">Rol de Usuario</label>
+                    {{ form.rol }}
+                    {% if form.rol.errors %}
+                        <span class="error-texto">{{ form.rol.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% url 'listar_perfiles' %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-guardar">Guardar Perfil</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Aprendizaje de Señas{% endblock %}
+
+{% block content %}
+<div class="pagina-inicio">
+
+    <header class="encabezado">
+        <div class="marca">
+            <img src="{% static 'images/logo_th.svg' %}" alt="Logo Aprendizaje de Señas" class="logo" />
+            <span>Aprendizaje de Señas</span>
+        </div>
+
+        <nav>
+            <a href=" '#' " class="enlace-login">Iniciar sesión</a>
+            <a href=" '#' " class="boton-registro">Registrarse</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-contenido">
+
+            <div class="hero-texto">
+                <p class="etiqueta">APRENDE · PRACTICA · COMUNÍCATE</p>
+
+                <h1>
+                    Aprende lengua de señas
+                    <span>de una manera sencilla.</span>
+                </h1>
+
+                <p class="descripcion">
+                    Una plataforma diseñada para aprender y practicar lengua de
+                    señas mediante módulos y actividades interactivas.
+                </p>
+
+                <div class="acciones">
+                    <a href="#" class="boton-principal">
+                        Crear una cuenta
+                    </a>
+
+                    <a href="#" class="boton-secundario">
+                        Ya tengo una cuenta
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-logo">
+                <div class="circulo-logo">
+                    <img src="{% static 'images/logo_th.svg' %}" alt="Aprendizaje de Señas" />
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="informacion">
+        <h2>¿Qué encontrarás?</h2>
+
+        <p class="subtitulo">
+            Empieza tu proceso de aprendizaje y avanza a tu propio ritmo.
+        </p>
+
+        <div class="tarjetas">
+
+            <div class="tarjeta">
+                <div class="icono">📚</div>
+                <h3>Módulos de aprendizaje</h3>
+                <p>
+                    Explora diferentes módulos organizados para facilitar
+                    el aprendizaje paso a paso.
+                </p>
+            </div>
+
+            <div class="tarjeta">
+                <div class="icono">🤟</div>
+                <h3>Aprende nuevas señas</h3>
+                <p>
+                    Conoce y practica diferentes señas para ampliar
+                    tu vocabulario.
+                </p>
+            </div>
+
+            <div class="tarjeta">
+                <div class="icono">🎯</div>
+                <h3>Practica</h3>
+                <p>
+                    Refuerza tus conocimientos mediante actividades
+                    y ejercicios interactivos.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Aprendizaje de Señas</p>
+    </footer>
+
+</div>
+{% endblock %}

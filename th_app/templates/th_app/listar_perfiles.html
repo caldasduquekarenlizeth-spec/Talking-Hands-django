@@ -1,0 +1,100 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Usuarios - Talking Hands{% endblock %}
+
+{% block content %}
+<!-- Navbar Superior -->
+<header class="header-navbar">
+    <div class="marca">
+        <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
+        <span>Talking Hands</span>
+    </div>
+
+    <nav class="nav-links">
+        <a href="#" class="nav-item">Inicio</a>
+        <a href="#" class="nav-item active">Usuarios</a>
+        <a href="#" class="nav-item">Perfil</a>
+        <a href="#" class="nav-item">Ranking</a>
+    </nav>
+
+    <div class="nav-iconos">
+        <button class="btn-campana">🔔</button>
+        <div class="user-avatar-nav">TH</div>
+    </div>
+</header>
+
+<!-- Contenido Principal -->
+<main class="contenedor-gestion">
+
+    <div class="titulo-seccion">
+        <h1>Gestión de Usuarios</h1>
+        <p>Administra los usuarios registrados en la plataforma.</p>
+    </div>
+
+    <div class="tarjeta-tabla-container">
+        <!-- Buscador y Botón -->
+        <div class="top-bar-acciones">
+            <div class="buscador-box">
+                <span class="icono-lupa">🔍</span>
+                <input type="text" placeholder="Buscar usuario..." class="input-buscar" />
+            </div>
+
+            <!-- Cambiar de: <button class="btn-anadir">Añadir Usuario</button> -->
+            <a href="{% url 'crear_perfil' %}" class="btn-anadir" style="text-decoration: none;">Añadir Usuario</a>
+
+        </div>
+
+        <!-- Tabla de Usuarios de Django -->
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo electrónico</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for perfil in perfiles %}
+                    <tr>
+                        <td>
+                            <div class="celda-usuario">
+                                <div class="avatar-tabla">
+                                    {{ perfil.nombre|slice:":1"|upper }}
+                                </div>
+                                <span>{{ perfil.nombre }}</span>
+                            </div>
+                        </td>
+                        <td class="correo-texto">{{ perfil.email }}</td>
+                        <td>
+                            <span class="badge-rol {% if perfil.rol == 'ADMIN' %}admin{% else %}aprendiz{% endif %}">
+                                {% if perfil.rol == 'ADMIN' %}Admin{% else %}Aprendiz{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="acciones-celda">
+                                <a href="{% url 'editar_perfil' perfil.id %}" class="btn-editar">Editar</a>
+                                <a href="#" class="btn-eliminar">Eliminar</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px;">
+                            No hay usuarios registrados en la plataforma.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Footer / Paginación -->
+        <div class="tabla-footer">
+            <span>Mostrando {{ perfiles|length }} usuario(s) registrados</span>
+            <div class="paginador-num">1</div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}
