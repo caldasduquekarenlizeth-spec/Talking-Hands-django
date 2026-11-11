@@ -5,13 +5,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import Modulo, Leccion, Ejercicio, Senna, Logro, Perfil
+import random
 
 # Create your views here.
+# Vista del Index.html
+def inicio(request):
+    return render(request, "th_app/index.html")
+
+
 # Registro nuevo aprendiz
 def registro_aprendiz(request):
     if request.method == "POST":
         username = request.POST.get("username")
-        nombre = request.POST.get("nombre")
         email = request.POST.get("email")
         password = request.POST.get("password")
 
@@ -25,34 +30,33 @@ def registro_aprendiz(request):
         #Crea el perfil con su cantidad de puntos de XP en 0
         Perfil.objects.create(
             usuario = user,
-            nombre = nombre or username,
             email = email,
             puntos_xp = 0
         )
 
         login(request, user)
-        messages.success(request, f"¡Bienvenido {nombre}! Comienza a aprender la lengua de señas colombiana iniciando sesión.")
+        messages.success(request, f"¡Bienvenido {username}! Comienza a aprender la lengua de señas colombiana iniciando sesión.")
         return redirect("dashboard_aprendiz")
-    return render(request, "th_app/aprendiz/registro.html")
+    return render(request, "th_app/aprendiz/register.html")
 
 
 
 
-# DASHBOARD APRENDIZ 
+# DASHBOARD APRENDIZ (Página que se mostrará cuando el usuario inicie sesión)
 @login_required
 def dashboard_aprendiz(request):
 
     # Redirigir al usuario al panel de administrador en caso de serlo
-    if request.User.is_staff:
+    if request.user.is_staff:
         return redirect("panel_admin")
 
     perfil, _ = Perfil.objects.get_or_create(
         usuario = request.user,
-        defaults={"nombre": request.user.username, "email": request.user.email, "puntos_xp": 0}
+        defaults={"puntos_xp": 0}
     )
 
     # prefetch_related es un método que optimiza las consultas en la base de datos
-    modulos = Modulo.objects.prefetch_related("lecciones").all()
+    modulos = Modulo.objects.prefetch_related("leccion_set").all()
     lecciones_completadas_ids = perfil.lecciones_completadas.values_list("id", flat=True)
 
     context = {
@@ -68,45 +72,46 @@ def dashboard_aprendiz(request):
 @login_required
 def realizar_leccion(request, leccion_id):
     leccion = get_object_or_404(Leccion, id=leccion_id)
-    ejercicios = leccion.objects.all()
     perfil = get_object_or_404(Perfil, usuario=request.user)
 
     if request.method == "POST":
+        ejercicios = Ejercicio.objects.filter(leccion=leccion).select_related('opcion_correcta')
         aciertos = 0
         total_ejercicios = ejercicios.count()
         resultados_detalle = []
 
         for ejercicio in ejercicios:
-            respuesta_usuario = request.POST.get(f"El ejercicio_{ejercicio.id}", "").strip()
-            es_correcta = respuesta_usuario.lower() == ejercicio.respuesta_correcta.strip().lower()
+            respuesta_id = request.POST.get(f"ejercicio_{ejercicio.id}")
+            es_correcta = False
 
+            if respuesta_id and ejercicio.opcion_correcta:
+                es_correcta = str(ejercicio.opcion_correcta.id) == str(respuesta_id)
+                
             if es_correcta:
                 aciertos += 1
 
             resultados_detalle.append({
                 "pregunta": ejercicio.pregunta,
-                "respuesta_usuario": respuesta_usuario,
-                "respuesta_correcta": ejercicio.respuesta_correcta,
                 "es_correcta": es_correcta,
+                "opcion_correcta": ejercicio.opcion_correcta,
             })
 
-        # Condicional para dar como aprobada la lección
         aprobado = (aciertos == total_ejercicios) if total_ejercicios > 0 else False
         xp_ganado = 0
 
         if aprobado:
-            # Si la lección se completa por primera vez otorga el puntaje completo.
+            puntos_base = getattr(leccion, 'puntos_xp', 20)
             if not perfil.lecciones_completadas.filter(id=leccion.id).exists():
-                perfil.puntos_xp += leccion.puntos_xp
+                perfil.puntos_xp += puntos_base
                 perfil.lecciones_completadas.add(leccion)
-                xp_ganado = leccion.puntos_xp
-            # Si se completa otra vez una lección solo se otorgarán 5 puntos
+                xp_ganado = puntos_base
             else:
                 perfil.puntos_xp += 5
                 xp_ganado = 5
 
             perfil.save()
-            verificar_logros(perfil)
+            if 'verificar_logros' in globals():
+                verificar_logros(perfil)
 
         context_resultado = {
             "leccion": leccion,
@@ -118,6 +123,20 @@ def realizar_leccion(request, leccion_id):
             "perfil": perfil,
         }
         return render(request, "th_app/aprendiz/resultado_leccion.html", context_resultado)
+
+    # --- PETICIÓN GET (Carga de la pantalla con ejercicios y opciones) ---
+    ejercicios = list(
+        Ejercicio.objects.filter(leccion=leccion)
+        .prefetch_related('opciones')
+        .select_related('opcion_correcta')
+        .order_by('?')
+    )
+
+    # Asignamos las opciones desordenadas a cada ejercicio para el render inicial
+    for ejercicio in ejercicios:
+        opciones_lista = list(ejercicio.opciones.all())
+        random.shuffle(opciones_lista)
+        ejercicio.opciones_aleatorias = opciones_lista
 
     context = {
         "leccion": leccion,
@@ -168,7 +187,7 @@ def diccionario_sennas(request):
 
 
 
-# PERFIL DEL APRENDIZ
+# PERFIL DEL APRENDIZ (RANKING)
 @login_required
 def perfil_y_ranking(request):
     perfil = get_object_or_404(Perfil, usuario=request.user)
@@ -184,4 +203,4 @@ def perfil_y_ranking(request):
         "logros_desbloqueados_ids": list(logros_desbloqueados_ids),
         "ranking": ranking,
     }
-    return render(request, "th_app/aprendiz/perfil_ranking.html", context)
+    return render(request, "th_app/aprendiz/perfil.html", context)

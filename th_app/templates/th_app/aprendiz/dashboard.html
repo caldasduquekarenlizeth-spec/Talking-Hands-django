@@ -1,0 +1,132 @@
+{% extends 'th_app/base.html' %}
+
+{% block title %}Mi Ruta de Aprendizaje | Talking Hands{% endblock %}
+
+{% block content %}
+<div class="learn-route-wrapper">
+  <div class="learn-route-container">
+    
+    <!-- Columna Principal: Mi Ruta de Aprendizaje -->
+    <main class="learn-main-content">
+      <header class="route-header">
+        <h1 class="route-title">Mi Ruta de Aprendizaje</h1>
+        <p class="route-subtitle">Haz clic en un módulo activo para comenzar las lecciones.</p>
+      </header>
+
+      <div class="route-modules-list">
+        {% for modulo in modulos %}
+          {# Simulación o cálculo de estado: desbloqueado si es de los primeros o si está habilitado #}
+          {% if forloop.counter <= 2 %}
+            <article class="route-module-card active">
+              <div class="route-card-icon icon-active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
+                  <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path>
+                  <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path>
+                  <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
+                </svg>
+              </div>
+
+              <div class="route-card-info">
+                <h3 class="route-module-title">Módulo {{ forloop.counter }}: {{ modulo.nombre }}</h3>
+                {% if modulo.descripcion %}
+                  <p class="route-module-desc">{{ modulo.descripcion }}</p>
+                {% endif %}
+
+                <!-- Barra de progreso personalizada -->
+                <div class="progress-bar-container">
+                  <div class="progress-bar-track">
+                    <div class="progress-bar-fill" style="width: {% if forloop.counter == 1 %}80%{% else %}40%{% endif %};"></div>
+                  </div>
+                  <span class="progress-bar-label">{% if forloop.counter == 1 %}80%{% else %}40%{% endif %} completado</span>
+                </div>
+              </div>
+
+              <div class="route-card-action">
+                {% with modulo.lecciones.first|default:modulo.leccion_set.first as primera_leccion %}
+                    {% if primera_leccion %}
+                        <a href="{% url 'realizar_leccion' primera_leccion.id %}" class="btn-route-study">Estudiar</a>
+                    {% else %}
+                        <span class="btn-route-locked">Sin lecciones</span>
+                    {% endif %}
+                {% endwith %}
+              </div>
+            </article>
+
+          {% else %}
+            <!-- Tarjeta Bloqueada -->
+            <article class="route-module-card locked">
+              <div class="route-card-icon icon-locked">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+
+              <div class="route-card-info">
+                <h3 class="route-module-title">Módulo {{ forloop.counter }}: {{ modulo.nombre }}</h3>
+                {% if modulo.descripcion %}
+                  <p class="route-module-desc">{{ modulo.descripcion }}</p>
+                {% endif %}
+              </div>
+
+              <div class="route-card-action">
+                <span class="btn-route-locked">Bloqueado</span>
+              </div>
+            </article>
+          {% endif %}
+        {% empty %}
+          <p class="empty-state">No hay módulos disponibles en este momento.</p>
+        {% endfor %}
+      </div>
+    </main>
+
+    <!-- Columna Lateral Derecha -->
+    <aside class="learn-sidebar">
+      <!-- Widget Meta Diaria -->
+      <section class="sidebar-widget">
+        <div class="widget-header">
+          <h4 class="widget-title">Meta diaria</h4>
+          <span class="widget-goal-count">30 / 50 XP</span>
+        </div>
+        
+        <div class="progress-bar-track daily-track">
+          <div class="progress-bar-fill" style="width: 60%;"></div>
+        </div>
+
+        <p class="widget-hint">¡Completa una lección de 20 XP hoy para alcanzar tu meta diaria!</p>
+      </section>
+
+      <!-- Widget Liga Bronce (Top 3) -->
+      <section class="sidebar-widget">
+        <div class="widget-header clickable">
+          <h4 class="widget-title">Liga Bronce (Top 3)</h4>
+          <span class="widget-arrow">›</span>
+        </div>
+
+        <ul class="ranking-list">
+          <li class="ranking-item">
+            <span class="rank-pos">1</span>
+            <span class="rank-avatar">👩</span>
+            <span class="rank-name">...</span>
+            <span class="rank-xp">1450 XP</span>
+          </li>
+          <li class="ranking-item">
+            <span class="rank-pos">2</span>
+            <span class="rank-avatar">🧔</span>
+            <span class="rank-name">...</span>
+            <span class="rank-xp">1250 XP</span>
+          </li>
+          <li class="ranking-item current-user">
+            <span class="rank-pos">3</span>
+            <span class="rank-avatar">🧒</span>
+            <span class="rank-name">...</span>
+            <span class="rank-xp">{{ perfil.puntos_xp }} XP</span>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+  </div>
+</div>
+{% endblock %}

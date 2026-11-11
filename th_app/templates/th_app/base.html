@@ -8,59 +8,54 @@
     <link rel="stylesheet" href="{% static 'th_app/css/styles.css' %}">
 </head>
 
+<body>
+
 <header class="main-header">
     <div class="nav-container">
         <!-- Logo principal -->
         <a href="{% if user.is_authenticated %}{% url 'dashboard_aprendiz' %}{% else %}/{% endif %}" class="brand-logo">
-            🤟 Talking<span>Hands</span>
+            <span class="logo-emoji">🤟</span> Talking<span>Hands</span>
         </a>
 
         <!-- Header dinámico según sesión -->
-        <nav>
+        <nav class="nav-menu">
             {% if user.is_authenticated %}
-                <!-- HEADER 1: USUARIO AUTENTICADO (APRENDIZ) -->
+                <!-- HEADER 1: USUARIO AUTENTICADO -->
                 <ul class="nav-links">
                     <li>
-                        <a href="{% url 'dashboard_aprendiz' %}">Ruta</a>
+                        <a href="{% url 'dashboard_aprendiz' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard_aprendiz' %}active{% endif %}">Ruta</a>
                     </li>
                     <li>
-                        <a href="{% url 'diccionario_sennas' %}">Diccionario LSC</a>
+                        <a href="{% url 'diccionario_sennas' %}" class="nav-item {% if request.resolver_match.url_name == 'diccionario_sennas' %}active{% endif %}">Diccionario LSC</a>
                     </li>
                     <li>
-                        <a href="{% url 'perfil_y_ranking' %}">Ranking</a>
+                        <a href="{% url 'perfil_y_ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'perfil_y_ranking' %}active{% endif %}">Ranking</a>
                     </li>
-                        
-                    <!-- Puntos XP del Perfil actual -->
+                </ul>
+
+                <div class="nav-user-actions">
                     {% if user.perfil %}
-                        <li>
-                            <span class="xp-pill">⚡ {{ user.perfil.puntos_xp }} XP</span>
-                        </li>
+                        <div class="nav-xp-badge">
+                            ⚡ <span>{{ user.perfil.puntos_xp }} XP</span>
+                        </div>
                     {% endif %}
 
-                    <li>
-                        <a href="{% url 'perfil_y_ranking' %}">
-                            <strong>{{ user.username }}</strong>
-                        </a>
-                    </li>
+                    <a href="{% url 'perfil_y_ranking' %}" class="nav-username" title="Mi Perfil">
+                        <span class="user-avatar-mini">👤</span>
+                        <span>{{ user.username }}</span>
+                    </a>
 
-                    <!-- Botón para cerrar sesión vía POST -->
-                    <li>
-                        <form action="{% url 'logout' %}" method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn-logout">Salir</button>
-                        </form>
-                    </li>
-                </ul>
+                    <form action="{% url 'logout' %}" method="POST" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-logout" title="Cerrar sesión">Salir</button>
+                    </form>
+                </div>
             {% else %}
-                <!-- HEADER 2: USUARIO NO AUTENTICADO (VISITANTE) -->
-                <ul class="nav-links">
-                    <li>
-                        <a href="{% url 'login' %}" class="btn btn-outline">Iniciar sesión</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'registro' %}" class="btn btn-solid">Registrarse</a>
-                    </li>
-                </ul>
+                <!-- HEADER 2: USUARIO NO AUTENTICADO -->
+                <div class="nav-guest-actions">
+                    <a href="{% url 'login' %}" class="btn-text">Iniciar sesión</a>
+                    <a href="{% url 'registro' %}" class="btn btn-primary btn-sm">Registrarse</a>
+                </div>
             {% endif %}
         </nav>
     </div>
@@ -83,6 +78,12 @@
     {% endblock %}
 </main>
 
+<footer class="footer-simple">
+    <p>© 2026 Aprendizaje de Señas</p>
+</footer>
+
+{% block extra_js %}
+{% endblock %}
 
 </body>
 </html>

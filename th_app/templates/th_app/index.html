@@ -1,88 +1,75 @@
 {% extends 'th_app/base.html' %}
 {% load static %}
 
-{% block title %}Inicio | Talking Hands{% endblock %}
+{% block title %}Aprendizaje de Señas | Inicio{% endblock %}
 
 {% block content %}
 <!-- Sección Hero -->
 <section class="hero-section">
   <div class="hero-container">
     <div class="hero-content">
-      <div class="badge-colombia">
-        <span class="flag">🇨🇴</span>
-        <span>100% Colombiano</span>
-      </div>
-
+      <span class="hero-tag">APRENDE · PRACTICA · COMUNÍCATE</span>
+      
       <h1 class="hero-title">
-        Aprende Lengua de Señas Colombiana de forma divertida
+        Aprende lengua de señas<br>
+        <span class="hero-title-highlight">de una manera sencilla.</span>
       </h1>
 
       <p class="hero-description">
-        Domina el abecedario, saludos y vocabulario cotidiano con lecciones interactivas, desafíos de racha diaria y práctica lúdica.
+        Una plataforma diseñada para aprender y practicar lengua de señas mediante módulos y actividades interactivas.
       </p>
 
       <div class="hero-buttons">
-        <a href="#comenzar" class="btn btn-primary btn-lg">Comenzar gratis</a>
-        <a href="#mas-info" class="btn btn-outline btn-lg">Saber más</a>
+        <a href="#registro" class="btn btn-primary">Crear una cuenta</a>
+        <a href="#login" class="btn btn-outline">Ya tengo una cuenta</a>
       </div>
     </div>
 
-    <div class="hero-media">
-      <div class="hero-image-card">
-        <!-- Reemplaza la ruta por tu archivo estático correspondiente -->
-        <img src="{% static 'img/hero-illustration.png' %}" alt="Ilustración de aprendizaje Talking Hands" class="hero-img">
-        <div class="image-action-badge left">
-          <i data-lucide="hand"></i>
-        </div>
-        <div class="image-action-badge right">
-          <i data-lucide="rotate-ccw"></i>
+    <!-- Emblema / Ilustración circular Talking Hands -->
+    <div class="hero-visual">
+      <div class="talking-badge-halo">
+        <div class="circulo-logo">
+          <!-- Icono SVG de mano en seña -->
+          <img src="static/th_app/images/logo_th.svg" alt="Icono talking hands">
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Sección Características / Beneficios -->
+<!-- Sección Características / ¿Qué encontrarás? -->
 <section class="features-section">
   <div class="features-container">
-    <div class="section-header">
-      <h2 class="section-title">¿Por qué aprender con Talking Hands?</h2>
-      <p class="section-subtitle">
-        Nuestra metodología lúdica hace que incorporar el aprendizaje sea natural, continuo y efectivo.
-      </p>
+    <div class="section-heading">
+      <h2 class="section-title">¿Qué encontrarás?</h2>
+      <p class="section-subtitle">Empieza tu proceso de aprendizaje y avanza a tu propio ritmo.</p>
     </div>
 
-    <div class="features-grid">
-      <!-- Card 1 -->
+    <div class="cards-grid">
+      <!-- Tarjeta 1 -->
       <article class="feature-card">
-        <div class="feature-icon">
-          <i data-lucide="gamepad-2"></i>
-        </div>
-        <h3 class="feature-title">Gamificación</h3>
-        <p class="feature-text">
-          Suma puntos de experiencia (XP), completa misiones, mantén tu racha diaria y compite amistosamente en ligas de aprendizaje.
+        <div class="card-icon icon-libros">📚</div>
+        <h3 class="card-title">Módulos de aprendizaje</h3>
+        <p class="card-text">
+          Explora diferentes módulos organizados para facilitar el aprendizaje paso a paso.
         </p>
       </article>
 
-      <!-- Card 2 -->
+      <!-- Tarjeta 2 -->
       <article class="feature-card">
-        <div class="feature-icon">
-          <i data-lucide="layers"></i>
-        </div>
-        <h3 class="feature-title">Lecciones interactivas</h3>
-        <p class="feature-text">
-          Aprende de forma visual y táctil con videos nativos en LSC, retos de selección múltiple y arrastrar y soltar.
+        <div class="card-icon icon-senas">🤟</div>
+        <h3 class="card-title">Aprende nuevas señas</h3>
+        <p class="card-text">
+          Conoce y practica diferentes señas para ampliar tu vocabulario.
         </p>
       </article>
 
-      <!-- Card 3 -->
+      <!-- Tarjeta 3 -->
       <article class="feature-card">
-        <div class="feature-icon">
-          <i data-lucide="message-square-code"></i>
-        </div>
-        <h3 class="feature-title">Aprende por temáticas</h3>
-        <p class="feature-text">
-          Explora diferentes módulos organizados por temas y avanza según tu ritmo.
+        <div class="card-icon icon-practica">🎯</div>
+        <h3 class="card-title">Practica</h3>
+        <p class="card-text">
+          Refuerza tus conocimientos mediante actividades y ejercicios interactivos.
         </p>
       </article>
     </div>

@@ -1,0 +1,180 @@
+{% extends 'th_app/base.html' %}
+
+{% block title %}Práctica: {{ leccion.nombre }} | Talking Hands{% endblock %}
+
+{% block content %}
+<div class="quiz-wrapper">
+  
+  <!-- Barra superior: Salir, Progreso y Vidas -->
+  <header class="quiz-nav">
+    <a href="{% url 'dashboard_aprendiz' %}" class="quiz-exit">
+      <span>←</span> Salir
+    </a>
+    
+    <div class="progress-bar-container">
+      <div class="progress-bar-track" style="width: 220px;">
+        <div class="progress-bar-fill" id="quiz-progress-fill" style="width: 10%;"></div>
+      </div>
+      <span class="progress-bar-label" id="quiz-counter">1/{{ ejercicios|length }}</span>
+    </div>
+
+    <div class="quiz-lives">
+      <span>❤️</span> 3 Vidas
+    </div>
+  </header>
+
+  <form method="POST" action="" id="quiz-form" class="quiz-main-card">
+    {% csrf_token %}
+
+    {% for ejercicio in ejercicios %}
+      <div class="exercise-step {% if forloop.first %}active{% endif %}" 
+     data-correcta-id="{{ ejercicio.opcion_correcta.id }}">
+  
+  <h2 class="quiz-question-title">{{ ejercicio.pregunta }}</h2>
+
+  <div class="quiz-workspace">
+    <!-- Marco de imagen -->
+    <div class="sign-media-frame">
+      {% if ejercicio.opcion_correcta and ejercicio.opcion_correcta.imagen %}
+        <img src="{{ ejercicio.opcion_correcta.imagen.url }}" alt="Seña" class="sign-img">
+      {% else %}
+        <div class="sign-placeholder"><span>🤟</span></div>
+      {% endif %}
+    </div>
+
+    <!-- Opciones -->
+    <div class="options-container">
+      {% for opcion in ejercicio.opciones_aleatorias %}
+        <label class="option-card" for="opcion_{{ ejercicio.id }}_{{ opcion.id }}" data-opcion-id="{{ opcion.id }}">
+          <input 
+            type="radio" 
+            name="ejercicio_{{ ejercicio.id }}" 
+            id="opcion_{{ ejercicio.id }}_{{ opcion.id }}" 
+            value="{{ opcion.id }}" 
+            required
+          >
+          <span class="option-letter">
+            {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% else %}D{% endif %}
+          </span>
+          <span class="option-label">{{ opcion.nombre }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </div>
+
+<!-- Contenedor del mensaje de respuesta (Correcto / Incorrecto) -->
+  <div class="feedback-banner" style="display: none;">
+    <div class="feedback-content">
+      <span class="feedback-icon"></span>
+      <div class="feedback-texts">
+        <h4 class="feedback-title"></h4>
+        <p class="feedback-subtitle"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie con acciones -->
+  <footer class="quiz-footer-actions">
+    <button type="button" class="btn btn-outline quiz-hint-btn">💡 Pista</button>
+    <button type="button" class="btn btn-primary btn-lg btn-check-step">Comprobar</button>
+  </footer>
+</div>
+
+    {% empty %}
+      <div class="empty-state" style="text-align: center; padding: 4rem;">
+        <p>Esta lección aún no tiene ejercicios configurados.</p>
+        <a href="{% url 'dashboard_aprendiz' %}" class="btn btn-primary" style="margin-top: 1rem;">Volver a la ruta</a>
+      </div>
+    {% endfor %}
+
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const steps = document.querySelectorAll('.exercise-step');
+  const totalSteps = steps.length;
+  let currentStep = 0;
+
+  const progressFill = document.getElementById('quiz-progress-fill');
+  const counterText = document.getElementById('quiz-counter');
+  const form = document.getElementById('quiz-form');
+
+  function updateProgress(index) {
+    if (progressFill && counterText && totalSteps > 0) {
+      const percent = ((index + 1) / totalSteps) * 100;
+      progressFill.style.width = percent + '%';
+      counterText.textContent = `${index + 1}/${totalSteps}`;
+    }
+  }
+
+  steps.forEach((step, index) => {
+    const checkBtn = step.querySelector('.btn-check-step');
+    const correctaId = String(step.getAttribute('data-correcta-id'));
+    const banner = step.querySelector('.feedback-banner');
+    const feedbackIcon = step.querySelector('.feedback-icon');
+    const feedbackTitle = step.querySelector('.feedback-title');
+    const feedbackSubtitle = step.querySelector('.feedback-subtitle');
+    let verificado = false;
+
+    checkBtn.addEventListener('click', () => {
+      // ESTADO 1: Verificar respuesta seleccionada
+      if (!verificado) {
+        const checkedInput = step.querySelector('input[type="radio"]:checked');
+        if (!checkedInput) {
+          alert('Selecciona una opción antes de comprobar.');
+          return;
+        }
+
+        const selectedCard = checkedInput.closest('.option-card');
+        const selectedId = String(checkedInput.value);
+        const esCorrecto = selectedId === correctaId;
+
+        // Deshabilitar inputs para que no cambie la respuesta
+        step.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+
+        // Mostrar banners y estilos
+        banner.style.display = 'flex';
+        if (esCorrecto) {
+          banner.className = 'feedback-banner success';
+          selectedCard.classList.add('correct-choice');
+          feedbackIcon.textContent = '🎉';
+          feedbackTitle.textContent = '¡Excelente! Es la seña correcta.';
+          feedbackSubtitle.textContent = 'Continúa sumando puntos.';
+        } else {
+          banner.className = 'feedback-banner error';
+          selectedCard.classList.add('wrong-choice');
+          // Resaltar cuál era la correcta
+          const correctOptionCard = step.querySelector(`[data-opcion-id="${correctaId}"]`);
+          if (correctOptionCard) correctOptionCard.classList.add('correct-choice');
+
+          feedbackIcon.textContent = '❌';
+          feedbackTitle.textContent = 'Respuesta incorrecta';
+          feedbackSubtitle.textContent = 'Revisa la seña marcada en verde.';
+        }
+
+        verificado = true;
+        checkBtn.textContent = (index === totalSteps - 1) ? 'Finalizar lección' : 'Continuar';
+        checkBtn.classList.remove('btn-primary');
+        checkBtn.classList.add(esCorrecto ? 'btn-continue-success' : 'btn-continue-error');
+
+      // ESTADO 2: Avanzar al siguiente o enviar formulario al completar
+      } else {
+        if (index < totalSteps - 1) {
+          step.classList.remove('active');
+          currentStep++;
+          steps[currentStep].classList.add('active');
+          updateProgress(currentStep);
+        } else {
+          // Reactivar inputs para que el POST de Django los reciba todos
+          form.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = false);
+          form.submit();
+        }
+      }
+    });
+  });
+});
+</script>
+{% endblock %}
