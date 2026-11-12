@@ -35,7 +35,7 @@ def registro_aprendiz(request):
         )
 
         login(request, user)
-        messages.success(request, f"¡Bienvenido {username}! Comienza a aprender la lengua de señas colombiana iniciando sesión.")
+        messages.success(request, f"¡Bienvenido {username}! Ya puedes empezar a aprender lengua de señas colombiana.")
         return redirect("dashboard_aprendiz")
     return render(request, "th_app/aprendiz/register.html")
 
@@ -45,7 +45,6 @@ def registro_aprendiz(request):
 # DASHBOARD APRENDIZ (Página que se mostrará cuando el usuario inicie sesión)
 @login_required
 def dashboard_aprendiz(request):
-
     # Redirigir al usuario al panel de administrador en caso de serlo
     if request.user.is_staff:
         return redirect("panel_admin")
@@ -55,18 +54,62 @@ def dashboard_aprendiz(request):
         defaults={"puntos_xp": 0}
     )
 
+    ranking = Perfil.objects.order_by("-puntos_xp")[:10]
+
     # prefetch_related es un método que optimiza las consultas en la base de datos
-    modulos = Modulo.objects.prefetch_related("leccion_set").all()
-    lecciones_completadas_ids = perfil.lecciones_completadas.values_list("id", flat=True)
+    modulos = Modulo.objects.all()
+    completadas_ids = set(perfil.lecciones_completadas.values_list("id", flat=True))
+
+    modulos_ruta =[]
+    anterior_completado = True #Garantiza que el primer módulo esté desbloqueado siempre
+
+    for modulo in modulos:
+        lecciones = list(Leccion.objects.filter(id_modulo=modulo))
+        total_lecciones = len(lecciones)
+        # Declara una variable con la cantidad de lecciones completadas 
+        completadas_modulo = sum(1 for l in lecciones if l.id in completadas_ids)
+
+        if total_lecciones > 0:
+            # Calcula el porcentaje de completitud de un modulo
+            porcentaje = int((completadas_modulo / total_lecciones) * 100)
+        else:
+            porcentaje = 0
+
+        completado = (total_lecciones > 0 and completadas_modulo == total_lecciones)
+
+        siguiente_leccion = next((l for l in lecciones if l.id not in completadas_ids), None)
+        if not siguiente_leccion and lecciones:
+            siguiente_leccion = lecciones[0]
+
+        modulos_ruta.append({
+            "modulo":modulo,
+            "porcentaje": porcentaje,
+            "completadas": completadas_modulo,
+            "total": total_lecciones,
+            "esta_completado": completado,
+            "desbloqueado": anterior_completado,
+            "siguiente_leccion": siguiente_leccion,
+        })
+
+        anterior_completado = completado
 
     context = {
         "perfil": perfil,
-        "modulos": modulos,
-        "lecciones_completadas_ids": list(lecciones_completadas_ids),
+        "modulos_ruta": modulos_ruta,
+        "lecciones_completadas_ids": list(completadas_ids),
+        "ranking": ranking,
     }
     return render (request, "th_app/aprendiz/dashboard.html", context)
 
 
+# RANKING COMPLETO DE TODOS LOS USUARIOS REGISTRADOS
+def ranking(request):
+    ranking = Perfil.objects.order_by("-puntos_xp")
+
+    context = {
+        "ranking": ranking,
+    }
+    return render (request, "th_app/aprendiz/ranking.html", context)
 
 # VISTA DE LECCIONES Y MODULOS
 @login_required

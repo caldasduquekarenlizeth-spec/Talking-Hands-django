@@ -3,27 +3,63 @@
 {% block title %}Iniciar Sesión | Talking Hands{% endblock %}
 
 {% block content %}
-<div style="max-width: 420px; margin: 3rem auto; background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.06);">
-    <h2 style="margin-bottom: 1.5rem; text-align: center; color: var(--dark);">Iniciar Sesión</h2>
-    
-    <form method="POST">
+<section class="auth-section">
+<div class="auth-card">
+    <div class="auth-header">
+        <div class="auth-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <line x1="19" y1="8" x2="19" y2="14"></line>
+                <line x1="22" y1="11" x2="16" y2="11"></line>
+            </svg>
+        </div>
+        <h2 class="auth-title">Iniciar Sesión</h2>
+    </div>
+
+    {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="POST" class="auth-form">
         {% csrf_token %}
         
-        <div style="margin-bottom: 1.2rem;">
-            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Usuario:</label>
-            <input type="text" name="username" required style="width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="form-group">
+            <label for="id_username">Usuario:</label>
+            <input 
+            type="text" 
+            name="username" 
+            id="id_username" 
+            required 
+            class="form-input"
+        >
         </div>
 
-        <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; font-weight: 600; margin-bottom: 0.3rem;">Contraseña:</label>
-            <input type="password" name="password" required style="width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="form-group">
+            <label for="id_password">Contraseña:</label>
+            <input
+                type="password" 
+                id="id_password" 
+                name="password"
+                required 
+                class="form-input"
+            >
         </div>
 
-        <button type="submit" class="btn btn-solid" style="width: 100%; padding: 0.75rem;">Ingresar</button>
+        <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
     </form>
 
-    <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
-        ¿No tienes cuenta? <a href="{% url 'registro' %}" style="color: var(--primary); font-weight: bold;">Regístrate aquí</a>
-    </p>
+    <div class="auth-footer">
+        <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+            ¿No tienes cuenta? <a href="{% url 'registro' %}" style="color: var(--primary); font-weight: bold;">Regístrate aquí</a>
+        </p>
+    </div>
 </div>
+</section>
 {% endblock %}

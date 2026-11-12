@@ -21,13 +21,16 @@ body {
   background-color: var(--blanco);
   color: var(--text_main);
   line-height: 1.6;
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin: 0;
 }
 
-main {
-  flex: 1 0 auto;
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 
@@ -100,6 +103,9 @@ main {
 .btn-primary {
   background-color: var(--botones);
   color: var(--blanco);
+  text-decoration: none;
+  border-radius: 5px;
+  padding: 0.75rem 1rem;
 }
 
 .btn-primary:hover {
@@ -120,6 +126,8 @@ main {
 .btn-outline {
   color: var(--verde);
   padding: 0.65rem 1.4rem;
+  text-decoration: none;
+  border-radius: 5px;
 }
 
 .btn-outline:hover {
@@ -138,6 +146,11 @@ main {
 .btn-sm {
   padding: 0.45rem 1.15rem;
   font-size: 0.88rem;
+}
+
+.btn-check-step{
+  padding: 0.45rem 0.75rem;
+  border-radius: 5px;
 }
 
 /* Hero Section */
@@ -1432,6 +1445,133 @@ main {
   opacity: 0.9;
 }
 
+.result-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.result-badge-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  margin: 0 auto 1rem;
+}
+
+.result-badge-icon.success {
+  background-color: #dcfce7;
+  border: 2px solid #86efac;
+}
+
+.result-badge-icon.error {
+  background-color: #fee2e2;
+  border: 2px solid #fca5a5;
+}
+
+.result-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.25rem;
+}
+
+.result-stat-box {
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.result-stat-box.highlight-xp {
+  background-color: #f0fdf4;
+  border-color: var(--verde);
+}
+
+.stat-box-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text_secundario);
+  text-transform: uppercase;
+}
+
+.stat-box-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.highlight-xp .stat-box-value {
+  color: var(--verde_oscuro);
+}
+
+.result-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.result-mini-sign {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .result-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.route-module-card.module-completed {
+  border-color: #bbf7d0;
+  background-color: #fcfffd;
+}
+
+.badge-completed {
+  background-color: #dcfce7;
+  color: var(--verde_oscuro);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+}
+
+.btn-route-review {
+  display: inline-block;
+  background-color: #f0fdf4;
+  color: var(--verde_oscuro);
+  border: 1.5px solid #86efac;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.6rem 1.45rem;
+  border-radius: 9px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-route-review:hover {
+  background-color: #dcfce7;
+}
+
 /* Clases dinámicas sobre las tarjetas de opción */
 .option-card.correct-choice {
   border-color: var(--verde) !important;
@@ -1467,4 +1607,725 @@ main {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.profile-avatar-large {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--verde), var(--verde_oscuro));
+  color: #ffffff;
+  font-size: 2.2rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(57, 169, 0, 0.25);
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.profile-mini-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.mini-stat-pill {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 0.4rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Cuadrícula de Logros */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+.achievement-card.unlocked {
+  border-color: #bbf7d0;
+  background-color: #fcfffd;
+}
+
+.achievement-card.locked {
+  background-color: #f1f5f9;
+  opacity: 0.72;
+}
+
+.achievement-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.achievement-icon.unlocked {
+  background-color: #dcfce7;
+}
+
+.achievement-icon.locked {
+  background-color: #e2e8f0;
+  filter: grayscale(1);
+}
+
+.achievement-info {
+  flex: 1;
+}
+
+.achievement-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.2rem;
+}
+
+.achievement-desc {
+  font-size: 0.8rem;
+  color: var(--text_secundario);
+  line-height: 1.35;
+}
+
+/* Filas del Top 10 Ranking */
+.ranking-row {
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.ranking-row.is-me {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.rank-user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ranking-row.is-me .rank-user-avatar {
+  background-color: var(--verde);
+  color: #ffffff;
+}
+
+@media (max-width: 700px) {
+  .profile-hero-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .profile-name-row, .profile-mini-stats {
+    justify-content: center;
+  }
+  .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dict-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dict-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.dict-search-form {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.search-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--blanco);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0 0.85rem;
+  transition: border-color 0.2s ease;
+}
+
+.search-input-group:focus-within {
+  border-color: var(--verde);
+}
+
+.dict-search-input {
+  border: none;
+  outline: none;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.9rem;
+  width: 240px;
+  color: #1e293b;
+  background: transparent;
+}
+
+.clear-search {
+  text-decoration: none;
+  color: var(--text_secundario);
+  font-size: 0.85rem;
+  padding: 0.2rem;
+}
+
+/* Píldoras de Categorías */
+.dict-categories-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.75rem;
+}
+
+.cat-pill {
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text_secundario);
+  background-color: var(--blanco);
+  border: 1.5px solid #e2e8f0;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.cat-pill:hover {
+  border-color: var(--verde);
+  color: var(--verde_oscuro);
+}
+
+.cat-pill.active {
+  background-color: var(--verde);
+  border-color: var(--verde);
+  color: var(--blanco);
+}
+
+/* Cuadrícula de tarjetas de señas */
+.dict-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.35rem;
+}
+
+.dict-card {
+  background-color: var(--blanco);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dict-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  border-color: #bbf7d0;
+}
+
+.dict-card-media {
+  position: relative;
+  height: 200px;
+  background-color: #fafbfb;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.dict-card-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.dict-cat-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #eaf8e2;
+  color: var(--verde_oscuro);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+}
+
+.dict-card-body {
+  padding: 1.15rem 1.25rem;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .dict-search-input {
+    width: 160px;
+  }
+}
+
+.main-header .brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+}
+
+.brand-logo-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.brand-logo-text {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #14532d !important; /* Verde bosque oscuro de la maqueta */
+  letter-spacing: -0.02em;
+}
+
+/* ==================================================
+   Diccionario LSC
+   ================================================== */
+.dict-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dict-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.dict-search-form {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.search-input-group {
+  display: flex;
+  align-items: center;
+  background-color: var(--blanco);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0 0.85rem;
+  transition: border-color 0.2s ease;
+}
+
+.search-input-group:focus-within {
+  border-color: var(--verde);
+}
+
+.dict-search-input {
+  border: none;
+  outline: none;
+  padding: 0.62rem 0.5rem;
+  font-size: 0.9rem;
+  width: 250px;
+  color: #1e293b;
+  background: transparent;
+}
+
+.clear-search {
+  text-decoration: none;
+  color: var(--text_secundario);
+  font-size: 0.85rem;
+  padding: 0.2rem;
+}
+
+/* Filtros por categoría */
+.dict-categories-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.cat-pill {
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text_secundario);
+  background-color: var(--blanco);
+  border: 1.5px solid #e2e8f0;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.cat-pill:hover {
+  border-color: var(--verde);
+  color: var(--verde_oscuro);
+}
+
+.cat-pill.active {
+  background-color: var(--verde);
+  border-color: var(--verde);
+  color: var(--blanco);
+}
+
+.dict-results-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.dict-reset-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--verde_oscuro);
+  text-decoration: none;
+}
+
+.dict-reset-link:hover {
+  text-decoration: underline;
+}
+
+/* Cuadrícula de tarjetas */
+.dict-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 1.35rem;
+}
+
+.dict-card {
+  background-color: var(--blanco);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.dict-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  border-color: #bbf7d0;
+}
+
+.dict-card-media {
+  position: relative;
+  height: 195px;
+  background-color: #fafbfb;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.dict-card-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.dict-cat-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #eaf8e2;
+  color: var(--verde_oscuro);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+}
+
+.dict-card-body {
+  padding: 1.15rem 1.25rem;
+  flex: 1;
+}
+
+.dict-desc-clamp {
+  margin-bottom: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dict-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+}
+
+/* Modal de vista ampliada */
+.dict-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.dict-modal-backdrop.active {
+  display: flex;
+}
+
+.dict-modal-card {
+  position: relative;
+  background-color: var(--blanco);
+  border-radius: 20px;
+  max-width: 460px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+}
+
+.dict-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background-color: var(--blanco);
+  cursor: pointer;
+  font-weight: 700;
+  color: #475569;
+}
+
+.dict-modal-media {
+  height: 260px;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dict-modal-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.dict-modal-info {
+  padding: 1.5rem 1.75rem;
+}
+
+@media (max-width: 600px) {
+  .dict-search-input {
+    width: 165px;
+  }
+}
+
+/* ==================================================
+   Página Dedicada de Ranking
+   ================================================== */
+.ranking-page-container {
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ranking-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ranking-card-box {
+  padding: 1.5rem 1.75rem;
+}
+
+.ranking-table-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text_secundario);
+  padding: 0 0.85rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 0.75rem;
+}
+
+.ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.ranking-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background-color: #ffffff;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.ranking-row:hover {
+  background-color: #f8fafc;
+  transform: translateX(3px);
+}
+
+/* Destacado para los 3 primeros lugares */
+.ranking-row.podium-1 {
+  background-color: #fefce8;
+  border-color: #fde047;
+}
+
+.ranking-row.podium-2 {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.ranking-row.podium-3 {
+  background-color: #fff7ed;
+  border-color: #fdba74;
+}
+
+/* Destacado para el usuario actual */
+.ranking-row.is-me {
+  background-color: #f0fdf4;
+  border: 1.5px solid var(--verde);
+}
+
+.rank-pos {
+  width: 34px;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text_secundario);
+  flex-shrink: 0;
+}
+
+.rank-user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ranking-row.is-me .rank-user-avatar {
+  background: linear-gradient(135deg, var(--verde), var(--verde_oscuro));
+  color: #ffffff;
+}
+
+.rank-user-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.rank-name {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #1e293b;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rank-name.is-me-text {
+  font-weight: 800;
+  color: var(--verde_oscuro);
+}
+
+.you-pill {
+  background-color: var(--verde);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.12rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.rank-xp-badge {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--verde_oscuro);
+  background-color: #eaf8e2;
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 540px) {
+  .ranking-card-box {
+    padding: 1rem;
+  }
+  .ranking-row {
+    padding: 0.65rem 0.75rem;
+    gap: 0.65rem;
+  }
 }

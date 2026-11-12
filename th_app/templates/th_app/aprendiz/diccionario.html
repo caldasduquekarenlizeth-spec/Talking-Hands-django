@@ -1,0 +1,161 @@
+{% extends 'th_app/base.html' %}
+
+{% block title %}Diccionario LSC | Talking Hands{% endblock %}
+
+{% block content %}
+<div class="learn-route-wrapper">
+  <div class="dict-container">
+
+    <!-- Cabecera y Buscador -->
+    <header class="route-header dict-header">
+      <div>
+        <h1 class="route-title">Diccionario LSC</h1>
+        <p class="route-subtitle">Consulta, filtra y repasa las señas de la Lengua de Señas Colombiana.</p>
+      </div>
+
+      <!-- Formulario de búsqueda (envía ?q=... conservando ?categoria=... si existe) -->
+      <form method="GET" action="{% url 'diccionario_sennas' %}" class="dict-search-form">
+        {% if categoria_actual %}
+          <input type="hidden" name="categoria" value="{{ categoria_actual }}">
+        {% endif %}
+        
+        <div class="search-input-group">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            name="q" 
+            value="{{ query }}" 
+            placeholder="Buscar por nombre o descripción..." 
+            class="dict-search-input"
+            autocomplete="off"
+          >
+          {% if query %}
+            <a href="{% url 'diccionario_sennas' %}{% if categoria_actual %}?categoria={{ categoria_actual|urlencode }}{% endif %}" 
+               class="clear-search" 
+               title="Limpiar búsqueda">✕</a>
+          {% endif %}
+        </div>
+        
+        <button type="submit" class="btn-route-study" style="border: none; cursor: pointer;">Buscar</button>
+      </form>
+    </header>
+
+    <!-- Barra de Filtros por Categoría -->
+    <nav class="dict-categories-bar" aria-label="Filtrar por categoría">
+      <a href="{% url 'diccionario_sennas' %}{% if query %}?q={{ query|urlencode }}{% endif %}" 
+         class="cat-pill {% if not categoria_actual %}active{% endif %}">
+        Todas
+      </a>
+
+      {% for cat in categorias %}
+        {% if cat %}
+          <a href="{% url 'diccionario_sennas' %}?categoria={{ cat|urlencode }}{% if query %}&q={{ query|urlencode }}{% endif %}" 
+             class="cat-pill {% if categoria_actual|lower == cat|lower %}active{% endif %}">
+            {{ cat }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+
+    <!-- Barra de estado de resultados -->
+    <div class="dict-results-meta">
+      <span class="progress-bar-label">
+        Mostrando <strong>{{ sennas|length }}</strong> seña{{ sennas|length|pluralize:"s" }}
+        {% if categoria_actual %} en <span class="badge-completed">{{ categoria_actual }}</span>{% endif %}
+        {% if query %} que coinciden con "<strong>{{ query }}</strong>"{% endif %}
+      </span>
+
+      {% if query or categoria_actual %}
+        <a href="{% url 'diccionario_sennas' %}" class="dict-reset-link">Restablecer filtros</a>
+      {% endif %}
+    </div>
+
+    <!-- Cuadrícula de Señas -->
+    <section class="dict-grid">
+      {% for senna in sennas %}
+        <article class="dict-card" 
+                 onclick="abrirDetalleSenna(this)"
+                 data-nombre="{{ senna.nombre }}"
+                 data-categoria="{{ senna.categoria|default:'General' }}"
+                 data-descripcion="{{ senna.descripcion|default:'Sin descripción registrada para esta seña.' }}"
+                 data-imagen="{% if senna.imagen %}{{ senna.imagen.url }}{% endif %}">
+          
+          <div class="dict-card-media">
+            {% if senna.imagen %}
+              <img src="{{ senna.imagen.url }}" alt="Seña: {{ senna.nombre }}" class="dict-card-img" loading="lazy">
+            {% else %}
+              <div class="sign-placeholder">
+                <span>🤟</span>
+              </div>
+            {% endif %}
+
+            {% if senna.categoria %}
+              <span class="dict-cat-tag">{{ senna.categoria }}</span>
+            {% endif %}
+          </div>
+
+          <div class="dict-card-body">
+            <h3 class="route-module-title">{{ senna.nombre }}</h3>
+            {% if senna.descripcion %}
+              <p class="route-module-desc dict-desc-clamp">{{ senna.descripcion }}</p>
+            {% else %}
+              <p class="route-module-desc" style="margin-bottom: 0; font-style: italic;">Sin descripción detallada.</p>
+            {% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <div class="sidebar-widget dict-empty-state">
+          <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🔎</span>
+          <h3 class="route-module-title">No se encontraron señas</h3>
+          <p class="route-module-desc">No hay resultados para tu búsqueda o categoría seleccionada.</p>
+          <a href="{% url 'diccionario_sennas' %}" class="btn-route-study" style="margin-top: 1rem;">Ver todo el diccionario</a>
+        </div>
+      {% endfor %}
+    </section>
+
+  </div>
+</div>
+
+<!-- Modal para ver la seña ampliada -->
+<div id="senna-modal" class="dict-modal-backdrop" onclick="cerrarDetalleSenna(event)">
+  <div class="dict-modal-card" onclick="event.stopPropagation()">
+    <button type="button" class="dict-modal-close" onclick="cerrarDetalleSenna()">✕</button>
+    <div class="dict-modal-media" id="modal-senna-media"></div>
+    <div class="dict-modal-info">
+      <span class="badge-completed" id="modal-senna-cat"></span>
+      <h2 class="route-title" id="modal-senna-nombre" style="font-size: 1.65rem; margin: 0.5rem 0;"></h2>
+      <p class="route-subtitle" id="modal-senna-desc" style="line-height: 1.5;"></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function abrirDetalleSenna(card) {
+    const modal = document.getElementById('senna-modal');
+    const mediaBox = document.getElementById('modal-senna-media');
+    const imgUrl = card.getAttribute('data-imagen');
+
+    document.getElementById('modal-senna-nombre').textContent = card.getAttribute('data-nombre');
+    document.getElementById('modal-senna-cat').textContent = card.getAttribute('data-categoria');
+    document.getElementById('modal-senna-desc').textContent = card.getAttribute('data-descripcion');
+
+    if (imgUrl) {
+      mediaBox.innerHTML = `<img src="${imgUrl}" alt="Seña" class="dict-modal-img">`;
+    } else {
+      mediaBox.innerHTML = `<span style="font-size: 4rem;">🤟</span>`;
+    }
+
+    modal.classList.add('active');
+  }
+
+  function cerrarDetalleSenna() {
+    document.getElementById('senna-modal').classList.remove('active');
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') cerrarDetalleSenna();
+  });
+</script>
+{% endblock %}

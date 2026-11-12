@@ -14,7 +14,8 @@
     <div class="nav-container">
         <!-- Logo principal -->
         <a href="{% if user.is_authenticated %}{% url 'dashboard_aprendiz' %}{% else %}/{% endif %}" class="brand-logo">
-            <span class="logo-emoji">🤟</span> Talking<span>Hands</span>
+            <img src="{% static 'th_app/images/logo_th.svg' %}" alt="Talking Hands Logo" class="brand-logo-img">
+            <span class="brand-logo-text">Talking Hands</span>
         </a>
 
         <!-- Header dinámico según sesión -->
@@ -26,10 +27,10 @@
                         <a href="{% url 'dashboard_aprendiz' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard_aprendiz' %}active{% endif %}">Ruta</a>
                     </li>
                     <li>
-                        <a href="{% url 'diccionario_sennas' %}" class="nav-item {% if request.resolver_match.url_name == 'diccionario_sennas' %}active{% endif %}">Diccionario LSC</a>
+                        <a href="{% url 'diccionario_sennas' %}" class="nav-item {% if request.resolver_match.url_name == 'diccionario_sennas' %}active{% endif %}">Diccionario LSC</a> 
                     </li>
                     <li>
-                        <a href="{% url 'perfil_y_ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'perfil_y_ranking' %}active{% endif %}">Ranking</a>
+                        <a href="{% url 'ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'perfil_y_ranking' %}active{% endif %}">Ranking</a>
                     </li>
                 </ul>
 
