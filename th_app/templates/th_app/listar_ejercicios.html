@@ -1,0 +1,53 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Gestionar Ejercicios - {{ leccion.nombre }}{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'ver_lecciones' leccion.id_modulo.id %}" class="btn-volver">← Volver a lecciones</a>
+        <h1 style="color: #064e3b; margin-top: 6px;">Gestionar ejercicios</h1>
+        <p class="subtitulo-admin">Lección: {{ leccion.nombre }} (Módulo: {{ leccion.id_modulo.nombre }})</p>
+    </div>
+
+    <!-- Lista de Ejercicios -->
+    <div class="lista-modulos-container" style="margin-top: 20px;">
+        {% for ejercicio in ejercicios %}
+            <div class="tarjeta-modulo">
+                <div class="numero-modulo">
+                    🎯
+                </div>
+
+                <div class="info-modulo">
+                    <h2>
+                        Ejercicio {{ forloop.counter }}: {{ ejercicio.pregunta }}
+                        <span class="badge-tipo-leccion" style="background-color: #e0f2fe; color: #0369a1;">
+                            {{ ejercicio.get_tipo_display|default:ejercicio.tipo }}
+                        </span>
+                    </h2>
+                    <p><strong>Respuesta correcta:</strong> {{ ejercicio.respuesta_correcta }}</p>
+                </div>
+
+                <div class="acciones-modulo">
+                    <a href="{% url 'editar_ejercicio' ejercicio.id %}" class="btn-editar-modulo">✏️ Editar</a>
+                    <a href="{% url 'eliminar_ejercicio' ejercicio.id %}" class="btn-eliminar-modulo">🗑️ Eliminar</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="tarjeta-modulo" style="justify-content: center; color: #94a3b8; padding: 40px;">
+                <p>Esta lección aún no tiene ejercicios registrados.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Botón verde inferior para añadir ejercicio a esta lección -->
+    <div style="margin-top: 24px; margin-bottom: 40px;">
+        <a href="{% url 'crear_ejercicio' %}?leccion={{ leccion.id }}" class="btn-crear-verde">
+            ➕ Crear nuevo ejercicio
+        </a>
+    </div>
+
+</main>
+{% endblock %}

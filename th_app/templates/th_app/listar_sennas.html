@@ -1,0 +1,84 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Señas - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <!-- Encabezado -->
+    <div class="encabezado-sennas">
+        <div>
+            <h1>Gestión de Señas</h1>
+            <p class="subtitulo-admin">Administra la biblioteca de imágenes de la Lengua de Señas Colombiana.</p>
+        </div>
+        <a href="{% url 'crear_senna' %}" class="btn-crear-verde" style="text-decoration: none;">
+            + Nueva Seña
+        </a>
+    </div>
+
+    <!-- Barra de Búsqueda y Filtros -->
+    <div class="controls-bar-sennas">
+        <form method="GET" action="{% url 'listar_sennas' %}" class="buscador-box">
+            <span class="icono-lupa">🔍</span>
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ query|default:'' }}" 
+                placeholder="Buscar seña por nombre..." 
+                class="input-buscar"
+                autocomplete="off"
+            />
+            {% if categoria_actual and categoria_actual != 'Todas' %}
+                <input type="hidden" name="categoria" value="{{ categoria_actual }}">
+            {% endif %}
+        </form>
+
+        <div class="filter-categories">
+            <a href="{% url 'listar_sennas' %}{% if query %}?q={{ query }}{% endif %}" 
+               class="cat-btn {% if categoria_actual == 'Todas' %}active{% endif %}">
+                Todas
+            </a>
+            {% for cat in categorias %}
+                {% if cat %}
+                    <a href="{% url 'listar_sennas' %}?categoria={{ cat }}{% if query %}&q={{ query }}{% endif %}" 
+                       class="cat-btn {% if categoria_actual == cat %}active{% endif %}">
+                        {{ cat }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Grilla de Tarjetas -->
+    <div class="signs-grid">
+        {% for senna in sennas %}
+            <article class="sign-card">
+                <div class="image-container">
+                    {% if senna.imagen %}
+                        <img src="{{ senna.imagen.url }}" alt="{{ senna.nombre }}" loading="lazy" />
+                    {% else %}
+                        <span style="color: #94a3b8; font-size: 13px;">Sin imagen</span>
+                    {% endif %}
+                    <span class="category-tag">{{ senna.categoria|default:"General" }}</span>
+                </div>
+
+                <div class="card-content">
+                    <h3 class="sign-name">{{ senna.nombre }}</h3>
+                    <p class="sign-desc">{{ senna.descripcion|default:"Sin descripción asignada." }}</p>
+                </div>
+
+                <div class="card-actions">
+                    <a href="{% url 'editar_senna' senna.id %}" class="btn-edit-senna">✏️ Editar</a>
+                    <a href="{% url 'eliminar_senna' senna.id %}" class="btn-delete-senna">🗑️ Eliminar</a>
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-state-sennas">
+                No se encontraron señas registradas.
+            </div>
+        {% endfor %}
+    </div>
+
+</main>
+{% endblock %}

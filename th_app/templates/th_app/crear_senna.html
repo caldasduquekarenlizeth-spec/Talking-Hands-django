@@ -1,0 +1,71 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}{{ titulo|default:"Nueva Seña" }} - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'listar_sennas' %}" class="btn-volver">← Volver a señas</a>
+        <h1>{{ titulo|default:"Nueva Seña" }}</h1>
+        <p>Sube la imagen y completa los detalles para la biblioteca de Lengua de Señas Colombiana.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container">
+        <!-- ¡IMPORTANTE! enctype="multipart/form-data" permite subir archivos -->
+        <form method="POST" enctype="multipart/form-data" class="form-crear-perfil">
+            {% csrf_token %}
+
+            <div class="grid-dos-columnas">
+                <div class="grupo-campo">
+                    <label for="{{ form.nombre.id_for_label }}">Nombre / Palabra</label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <span class="error-texto">{{ form.nombre.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ form.categoria.id_for_label }}">Categoría</label>
+                    {{ form.categoria }}
+                    {% if form.categoria.errors %}
+                        <span class="error-texto">{{ form.categoria.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.imagen.id_for_label }}">Imagen de la Seña</label>
+                
+                <!-- Si estamos editando y ya existe una imagen, mostrar vista previa -->
+                {% if senna and senna.imagen %}
+                    <div class="preview-box-senna">
+                        <span>Imagen actual:</span>
+                        <img src="{{ senna.imagen.url }}" alt="{{ senna.nombre }}">
+                    </div>
+                {% endif %}
+
+                {{ form.imagen }}
+                {% if form.imagen.errors %}
+                    <span class="error-texto">{{ form.imagen.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.descripcion.id_for_label }}">Descripción o Instrucción</label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}
+                    <span class="error-texto">{{ form.descripcion.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% url 'listar_sennas' %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-guardar">Guardar Seña</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

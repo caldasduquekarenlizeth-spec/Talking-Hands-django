@@ -1,0 +1,53 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Eliminar Ejercicio - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'ver_ejercicios' ejercicio.leccion.id %}" class="btn-volver">← Volver a ejercicios</a>
+    </div>
+
+    <div class="tarjeta-eliminar-container">
+        <div class="icono-advertencia">⚠️</div>
+
+        <h2>Confirmar Eliminación</h2>
+        <p class="texto-advertencia">
+            ¿Estás seguro de que deseas eliminar este ejercicio? Esta acción no se puede deshacer y borrará permanentemente la pregunta de la lección.
+        </p>
+
+        <!-- Resumen del Ejercicio a Eliminar -->
+        <div class="resumen-perfil-eliminar">
+            <div class="numero-modulo" style="margin-right: 8px;">
+                🎯
+            </div>
+            <div class="detalles-perfil-eliminar">
+                <h3>{{ ejercicio.pregunta }}</h3>
+                <p><strong>Lección:</strong> {{ ejercicio.leccion.nombre }}</p>
+                
+                <div class="badges-ejercicio-eliminar">
+                    <span class="badge-tipo-ejercicio">
+                        {{ ejercicio.get_tipo_display|default:ejercicio.tipo }}
+                    </span>
+                    <span class="badge-respuesta-eliminar">
+                        ✓ Respuesta: {{ ejercicio.respuesta_correcta }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario POST de confirmación -->
+        <form method="POST" class="form-eliminar">
+            {% csrf_token %}
+            
+            <div class="acciones-eliminar">
+                <a href="{% url 'ver_ejercicios' ejercicio.leccion.id %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-confirmar-eliminar">Sí, Eliminar Ejercicio</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

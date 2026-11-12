@@ -1,0 +1,65 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Crear Ejercicio - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% if leccion %}{% url 'ver_ejercicios' leccion.id %}{% else %}{% url 'listar_modulos' %}{% endif %}" class="btn-volver">
+            ← Volver a ejercicios
+        </a>
+        <h1>Crear Nuevo Ejercicio</h1>
+        <p>Define la pregunta, el tipo de evaluación y la respuesta correcta del ejercicio.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container">
+        <form method="POST" class="form-crear-perfil">
+            {% csrf_token %}
+
+            <div class="grupo-campo">
+                <label for="{{ form.pregunta.id_for_label }}">Pregunta / Enunciado</label>
+                {{ form.pregunta }}
+                {% if form.pregunta.errors %}
+                    <span class="error-texto">{{ form.pregunta.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grid-dos-columnas">
+                <div class="grupo-campo">
+                    <label for="{{ form.tipo.id_for_label }}">Tipo de Ejercicio</label>
+                    {{ form.tipo }}
+                    {% if form.tipo.errors %}
+                        <span class="error-texto">{{ form.tipo.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ form.leccion.id_for_label }}">Lección Asociada</label>
+                    {{ form.leccion }}
+                    {% if form.leccion.errors %}
+                        <span class="error-texto">{{ form.leccion.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.respuesta_correcta.id_for_label }}">Respuesta Correcta</label>
+                {{ form.respuesta_correcta }}
+                {% if form.respuesta_correcta.errors %}
+                    <span class="error-texto">{{ form.respuesta_correcta.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% if leccion %}{% url 'ver_ejercicios' leccion.id %}{% else %}{% url 'listar_modulos' %}{% endif %}" class="btn-cancelar">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn-guardar">Guardar Ejercicio</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

@@ -72,3 +72,31 @@ class Logro(models.Model):
 
     def __str__(self):
         return f"{self.nombre}: {self.tipo}"
+
+class ActividadAdmin(models.Model):
+    ACCIONES = [
+        ('CREAR', 'Crear'),
+        ('EDITAR', 'Editar'),
+        ('ELIMINAR', 'Eliminar'),
+    ]
+
+    ENTIDADES = [
+        ('Módulo', 'Módulo'),
+        ('Lección', 'Lección'),
+        ('Ejercicio', 'Ejercicio'),
+        ('Seña', 'Seña'),
+        ('Logro', 'Logro'),
+    ]
+
+    # Si tienes sistema de login activo, puedes vincularlo al usuario:
+    # usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    accion = models.CharField(max_length=10, choices=ACCIONES)
+    entidad = models.CharField(max_length=20, choices=ENTIDADES)
+    detalle = models.CharField(max_length=150)  # Ej: 'Creaste el módulo "Saludos"'
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha']  # Siempre muestra las más recientes primero
+
+    def __str__(self):
+        return f"{self.detalle} ({self.entidad})"

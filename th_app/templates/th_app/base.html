@@ -12,8 +12,88 @@
     
     {% block extra_head %}{% endblock %}
 </head>
-<body>
-    {% block content %}
-    {% endblock %}
+<body class="layout-body">
+
+    <!-- Navbar Superior Global -->
+    <header class="header-navbar">
+        <div class="marca">
+            <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
+            <span>Talking Hands</span>
+        </div>
+
+        <nav class="nav-links">
+            <!-- Inicio: Activo solo si la ruta actual es 'dashboard' -->
+            <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                Inicio
+            </a>
+        
+            <!-- Gestión (Desplegable): Activo si estamos en cualquier vista administrativa -->
+            <div class="dropdown-container">
+                <a href="{% url 'listar_perfiles' %}" class="nav-item dropdown-trigger {% if request.resolver_match.url_name in 'listar_perfiles crear_perfil eliminar_perfil listar_modulos' %}active{% endif %}">
+                    Gestión <span class="flecha-dropdown">▼</span>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="{% url 'listar_perfiles' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_perfiles' %}active{% endif %}">
+                        👤 Usuarios
+                    </a>
+                    <a href="{% url 'listar_modulos' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_modulos' %}active{% endif %}">
+                        📚 Módulos
+                    </a>
+                    <a href="{% url 'listar_sennas' %}" class="dropdown-item">🤟 Señas</a>
+                    <a href="{% url 'listar_logros' %}" class="dropdown-item">🏆 Logros</a>
+                </div>
+            </div>
+        
+            <a href="#" class="nav-item">Perfil</a>
+            <a href="#" class="nav-item">Ranking</a>
+        </nav>
+
+        <div class="nav-iconos">
+            <button class="btn-campana">🔔</button>
+            <div class="user-avatar-nav">TH</div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal Dinámico -->
+    <div class="contenido-principal-layout">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Footer Global (Para todas las páginas) -->
+    <footer class="footer-landing">
+        <div class="contenedor-footer">
+            <div class="columna-footer-marca">
+                <div class="marca-footer">
+                    <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo-footer" />
+                    <span>Talking <strong>Hands</strong></span>
+                </div>
+                <p>
+                    Facilitando el acceso a la Lengua de Señas Colombiana a través de la educación lúdica, accesible y gratuita.
+                </p>
+            </div>
+
+            <div class="columna-footer-links">
+                <h3>Mapa del sitio</h3>
+                <ul>
+                    <li><a href="#">Lecciones</a></li>
+                    <li><a href="#">Comunidad</a></li>
+                    <li><a href="#">Logros</a></li>
+                </ul>
+            </div>
+
+            <div class="columna-footer-links">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><a href="#">Soporte</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright-bar">
+            <p>© 2026 Talking Hands. Creado con amor para la comunidad sorda y oyente de Colombia.</p>
+        </div>
+    </footer>
+
 </body>
 </html>

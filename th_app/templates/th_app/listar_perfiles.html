@@ -4,27 +4,6 @@
 {% block title %}Gestión de Usuarios - Talking Hands{% endblock %}
 
 {% block content %}
-<!-- Navbar Superior -->
-<header class="header-navbar">
-    <div class="marca">
-        <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
-        <span>Talking Hands</span>
-    </div>
-
-    <nav class="nav-links">
-        <a href="#" class="nav-item">Inicio</a>
-        <a href="#" class="nav-item active">Usuarios</a>
-        <a href="#" class="nav-item">Perfil</a>
-        <a href="#" class="nav-item">Ranking</a>
-    </nav>
-
-    <div class="nav-iconos">
-        <button class="btn-campana">🔔</button>
-        <div class="user-avatar-nav">TH</div>
-    </div>
-</header>
-
-<!-- Contenido Principal -->
 <main class="contenedor-gestion">
 
     <div class="titulo-seccion">
@@ -32,17 +11,20 @@
         <p>Administra los usuarios registrados en la plataforma.</p>
     </div>
 
-    <div class="tarjeta-tabla-container">
-        <!-- Buscador y Botón -->
         <div class="top-bar-acciones">
-            <div class="buscador-box">
+            <form method="GET" action="{% url 'listar_perfiles' %}" class="buscador-box">
                 <span class="icono-lupa">🔍</span>
-                <input type="text" placeholder="Buscar usuario..." class="input-buscar" />
-            </div>
-
-            <!-- Cambiar de: <button class="btn-anadir">Añadir Usuario</button> -->
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query|default:'' }}" 
+                    placeholder="Buscar por nombre o correo..." 
+                    class="input-buscar"
+                    autocomplete="off"
+                />
+            </form>
+        
             <a href="{% url 'crear_perfil' %}" class="btn-anadir" style="text-decoration: none;">Añadir Usuario</a>
-
         </div>
 
         <!-- Tabla de Usuarios de Django -->
@@ -75,7 +57,7 @@
                         <td>
                             <div class="acciones-celda">
                                 <a href="{% url 'editar_perfil' perfil.id %}" class="btn-editar">Editar</a>
-                                <a href="#" class="btn-eliminar">Eliminar</a>
+                                <a href="{% url 'eliminar_perfil' perfil.id %}" class="btn-eliminar">Eliminar</a>
                             </div>
                         </td>
                     </tr>

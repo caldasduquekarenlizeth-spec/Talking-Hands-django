@@ -1,0 +1,112 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Dashboard Administrador{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="titulo-seccion">
+        <h1>Panel de Control</h1>
+        <p>Bienvenido al sistema de administración de Talking Hands.</p>
+    </div>
+
+    <!-- Tarjetas de Métricas -->
+    <div class="grid-metricas">
+        <div class="tarjeta-metrica">
+            <div class="icono-metrica usuarios">👤</div>
+            <div class="info-metrica">
+                <h3>{{ total_usuarios }}</h3>
+                <p>Usuarios Registrados</p>
+            </div>
+        </div>
+
+        <div class="tarjeta-metrica">
+            <div class="icono-metrica modulos">📚</div>
+            <div class="info-metrica">
+                <h3>{{ total_modulos }}</h3>
+                <p>Módulos Activos</p>
+            </div>
+        </div>
+
+        <div class="tarjeta-metrica">
+            <div class="icono-metrica sennas">🤟</div>
+            <div class="info-metrica">
+                <h3>{{ total_sennas }}</h3>
+                <p>Señas Registradas</p>
+            </div>
+        </div>
+
+        <div class="tarjeta-metrica">
+            <div class="icono-metrica logros">🏆</div>
+            <div class="info-metrica">
+                <h3>{{ total_logros }}</h3>
+                <p>Logros Disponibles</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección Inferior: Accesos Rápidos y Últimos Usuarios -->
+    <div class="grid-dashboard-inferior">
+        
+        <!-- Accesos Rápidos -->
+        <div class="tarjeta-tabla-container">
+            <h2 class="subtitulo-card">Acciones Rápidas</h2>
+            <div class="lista-acciones-rapidas">
+                <a href="{% url 'crear_perfil' %}" class="btn-accion-rapida">
+                    <span>➕ Crear Nuevo Usuario</span>
+                    <small>Registrar un aprendiz o administrador</small>
+                </a>
+                <a href="{% url 'listar_perfiles' %}" class="btn-accion-rapida">
+                    <span>📋 Gestionar Usuarios</span>
+                    <small>Ver, buscar y eliminar registros</small>
+                </a>
+            </div>
+        </div>
+
+        <!-- Últimos Usuarios Registrados -->
+        <div class="tarjeta-tabla-container">
+            <div class="top-bar-acciones" style="margin-bottom: 14px;">
+                <h2 class="subtitulo-card" style="margin: 0;">Últimos Usuarios</h2>
+                <a href="{% url 'listar_perfiles' %}" class="link-ver-todos">Ver todos →</a>
+            </div>
+
+            <table class="tabla-usuarios">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Rol</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for perfil in ultimos_usuarios %}
+                        <tr>
+                            <td>
+                                <div class="celda-usuario">
+                                    <div class="avatar-tabla">
+                                        {{ perfil.nombre|slice:":1"|upper }}
+                                    </div>
+                                    <span>{{ perfil.nombre }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge-rol {% if perfil.rol == 'ADMIN' %}admin{% else %}aprendiz{% endif %}">
+                                    {% if perfil.rol == 'ADMIN' %}Admin{% else %}Aprendiz{% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; color: #94a3b8; padding: 20px;">
+                                No hay registros recientes.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</main>
+{% endblock %}
