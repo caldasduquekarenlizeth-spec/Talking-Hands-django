@@ -1,0 +1,99 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Perfil - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="layout-perfil-grid">
+        
+        <!-- Columna Izquierda: Tarjeta de Usuario + Configuraciones -->
+        <aside class="columna-izquierda-perfil">
+            
+            <!-- Tarjeta Avatar y Nombre -->
+            <div class="tarjeta-perfil-usuario">
+                <div class="avatar-grande-perfil">
+                    {% if perfil.foto %}
+                        <img src="{{ perfil.foto.url }}" alt="{{ perfil.nombre }}" class="img-avatar-circular">
+                    {% else %}
+                        <span class="iniciales-avatar">{{ perfil.nombre|slice:":2"|upper }}</span>
+                    {% endif %}
+            </div>
+                <h2 class="nombre-usuario-perfil">{{ perfil.nombre }}</h2>
+                <p class="correo-usuario-perfil">{{ perfil.email }}</p>
+
+                <a href="{% url 'editar_perfil_propio' perfil.id %}" class="btn-editar-perfil-outline">
+                    ✏️ Editar perfil
+                </a>
+            </div>
+
+            <!-- Tarjeta Configuraciones -->
+            <div class="tarjeta-configuraciones">
+                <span class="titulo-seccion-config">Administración y Seguridad</span>
+            
+                <a href="{% url 'cambiar_contrasena' %}" class="item-configuracion">
+                    <span>Cambiar contraseña</span>
+                    <span class="flecha-config">›</span>
+                </a>
+            
+                <a href="{% url 'gestion_auditoria' %}" class="item-configuracion">
+                    <span>Historial y respaldos</span>
+                    <span class="flecha-config">›</span>
+                </a>
+            
+                <a href="{% url 'config_sistema' %}" class="item-configuracion">
+                    <span>Estado de la plataforma</span>
+                    <span class="flecha-config">›</span>
+                </a>
+            </div>
+
+        </aside>
+
+        <!-- Columna Derecha: Historial de Actividad -->
+        <section class="tarjeta-historial-actividad">
+            <div class="header-historial">
+                <div>
+                    <h1>Historial de Actividad</h1>
+                    <p>Registro de las últimas acciones de administración en la plataforma</p>
+                </div>
+                <span class="badge-estado-activo">
+                    <span class="punto-verde"></span> Activo
+                </span>
+            </div>
+
+            <div class="lista-actividades">
+                {% for act in actividades %}
+                    <div class="fila-actividad">
+                        <div class="izq-actividad">
+                            <!-- Icono dinámico según el tipo de acción -->
+                            {% if act.accion == 'CREAR' %}
+                                <div class="icono-actividad crear">⊕</div>
+                            {% elif act.accion == 'EDITAR' %}
+                                <div class="icono-actividad editar">📝</div>
+                            {% elif act.accion == 'ELIMINAR' %}
+                                <div class="icono-actividad eliminar">🗑️</div>
+                            {% else %}
+                                <div class="icono-actividad otro">🌐</div>
+                            {% endif %}
+
+                            <div class="texto-actividad">
+                                <p class="detalle-accion">{{ act.detalle }}</p>
+                                <span class="tiempo-accion">Hace {{ act.fecha|timesince }}</span>
+                            </div>
+                        </div>
+
+                        <span class="etiqueta-entidad">{{ act.entidad }}</span>
+                    </div>
+                {% empty %}
+                    <div class="historial-vacio">
+                        <p>Aún no hay movimientos registrados. Crea, edita o elimina un módulo, lección o seña para verlo aquí.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </div>
+
+</main>
+{% endblock %}

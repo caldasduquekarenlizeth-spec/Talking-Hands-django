@@ -1,13 +1,35 @@
+import csv
 from django.db import models
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum
+from django.http import HttpResponse
 from .models import Perfil, Modulo, Leccion, Ejercicio, Senna, Logro, ActividadAdmin
-from .forms import formsPerfiles, formsModulos, formsLecciones, formsEjercicios, formsSennas, formsLogros
+from .forms import formsPerfiles, formsModulos, formsLecciones, formsEjercicios, formsSennas, formsLogros, formsEditarPerfilPropio
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+@login_required
+def cambiar_contrasena(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Mantiene la sesión iniciada
+            registrar_actividad('EDITAR', 'Módulo', 'Actualizaste tu contraseña de administrador')
+            messages.success(request, 'Tu contraseña ha sido actualizada exitosamente.')
+            return redirect('ver_perfil')
+    else:
+        form = PasswordChangeForm(request.user)
 
-def registrar_actividad(accion, entidad, detalle):
+    return render(request, 'th_app/cambiar_contrasena.html', {'form': form})
+
+def registrar_actividad(accion, entidad, detalle, perfil=None):
+    if perfil is None:
+        perfil = Perfil.objects.filter(rol='ADMIN').first() or Perfil.objects.first()
+        
     ActividadAdmin.objects.create(
         accion=accion,
         entidad=entidad,
@@ -396,3 +418,114 @@ def eliminar_logro(request, logro_id):
         return redirect('listar_logros')
 
     return render(request, 'th_app/eliminar_logro.html', {'logro': logro})
+
+
+def ver_perfil(request):
+    perfil = Perfil.objects.filter(rol='ADMIN').first() or Perfil.objects.first()
+    
+    if not perfil:
+        perfil = Perfil.objects.create(
+            nombre="Admin1",
+            email="admin@talkinghands.com",
+            puntos_xp=0,
+            rol="ADMIN"
+        )
+    actividades = ActividadAdmin.objects.all()[:10]
+
+    return render(request, 'th_app/perfil.html', {
+        'perfil': perfil,
+        'actividades': actividades,
+    })
+
+
+def editar_perfil_propio(request, perfil_id):
+    perfil = get_object_or_404(Perfil, id=perfil_id)
+
+    if request.method == 'POST':
+        form = formsEditarPerfilPropio(request.POST, request.FILES, instance=perfil)
+        if form.is_valid():
+            form.save()
+            registrar_actividad('EDITAR', 'Módulo', f'Actualizaste la información de tu perfil "{perfil.nombre}"')
+            messages.success(request, 'Perfil actualizado correctamente.')
+            return redirect('ver_perfil')
+    else:
+        form = formsEditarPerfilPropio(instance=perfil)
+
+    return render(request, 'th_app/editar_perfil.html', {
+        'form': form,
+        'perfil': perfil,
+    })
+
+
+def cambiar_contrasena(request):
+    # Usa el usuario logueado o, si no hay sesión activa aún, el superusuario/primer usuario
+    usuario = request.user if request.user.is_authenticated else (
+        User.objects.filter(is_superuser=True).first() or User.objects.first()
+    )
+
+    if not usuario:
+        messages.error(request, 'No hay ningún usuario administrador registrado en el sistema.')
+        return redirect('ver_perfil')
+
+    if request.method == 'POST':
+        form = PasswordChangeForm(usuario, request.POST)
+        if form.is_valid():
+            user = form.save()
+            if request.user.is_authenticated:
+                update_session_auth_hash(request, user)
+            registrar_actividad('EDITAR', 'Módulo', 'Actualizaste tu contraseña de administrador')
+            messages.success(request, 'Tu contraseña ha sido actualizada exitosamente.')
+            return redirect('ver_perfil')
+    else:
+        form = PasswordChangeForm(usuario)
+
+    return render(request, 'th_app/cambiar_contrasena.html', {'form': form})
+
+
+def gestion_auditoria(request):
+    if request.method == 'POST':
+        accion = request.POST.get('accion')
+        
+        if accion == 'exportar_sennas':
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="respaldo_sennas_th.csv"'
+            writer = csv.writer(response)
+            writer.writerow(['ID', 'Nombre', 'Categoría', 'Descripción'])
+            for s in Senna.objects.all():
+                writer.writerow([s.id, s.nombre, s.categoria, s.descripcion])
+            registrar_actividad('CREAR', 'Seña', 'Descargaste un respaldo CSV del catálogo de señas')
+            return response
+
+        elif accion == 'limpiar_historial':
+            ActividadAdmin.objects.all().delete()
+            registrar_actividad('ELIMINAR', 'Módulo', 'Reiniciaste el historial de actividad')
+            messages.success(request, 'Historial de actividad vaciado correctamente.')
+            return redirect('ver_perfil')
+
+    total_registros = ActividadAdmin.objects.count()
+    return render(request, 'th_app/gestion_auditoria.html', {'total_registros': total_registros})
+
+
+def config_sistema(request):
+    # Guardamos el estado en la sesión o en un campo booleano del perfil
+    modo_mantenimiento = request.session.get('modo_mantenimiento', False)
+
+    if request.method == 'POST':
+        nuevo_estado = 'modo_mantenimiento' in request.POST
+        request.session['modo_mantenimiento'] = nuevo_estado
+        estado_texto = "activado" if nuevo_estado else "desactivado"
+        registrar_actividad('EDITAR', 'Módulo', f'Modo mantenimiento {estado_texto}')
+        messages.success(request, f'Modo mantenimiento {estado_texto} correctamente.')
+        return redirect('config_sistema')
+
+    return render(request, 'th_app/config_sistema.html', {
+        'modo_mantenimiento': modo_mantenimiento
+    })
+
+def ver_ranking(request):
+    aprendices = Perfil.objects.filter(rol='APRENDIZ').order_by('-puntos_xp', 'nombre')
+
+    return render(request, 'th_app/ranking.html', {
+        'aprendices': aprendices,
+    })
+

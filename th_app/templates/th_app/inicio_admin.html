@@ -13,53 +13,82 @@
 
     <!-- Tarjetas de Métricas -->
     <div class="grid-metricas">
-        <div class="tarjeta-metrica">
-            <div class="icono-metrica usuarios">👤</div>
-            <div class="info-metrica">
-                <h3>{{ total_usuarios }}</h3>
-                <p>Usuarios Registrados</p>
+        <a href="{% url 'listar_perfiles' %}" class="tarjeta-metrica-link">
+            <div class="tarjeta-metrica">
+                <div class="icono-metrica usuarios">👤</div>
+                <div class="info-metrica">
+                    <h3>{{ total_usuarios }}</h3>
+                    <p>Usuarios Registrados</p>
+                </div>
             </div>
-        </div>
+        </a>
 
-        <div class="tarjeta-metrica">
-            <div class="icono-metrica modulos">📚</div>
-            <div class="info-metrica">
-                <h3>{{ total_modulos }}</h3>
-                <p>Módulos Activos</p>
+        <a href="{% url 'listar_modulos' %}" class="tarjeta-metrica-link">
+            <div class="tarjeta-metrica">
+                <div class="icono-metrica modulos">📚</div>
+                <div class="info-metrica">
+                    <h3>{{ total_modulos }}</h3>
+                    <p>Módulos Activos</p>
+                </div>
             </div>
-        </div>
+        </a>
 
-        <div class="tarjeta-metrica">
-            <div class="icono-metrica sennas">🤟</div>
-            <div class="info-metrica">
-                <h3>{{ total_sennas }}</h3>
-                <p>Señas Registradas</p>
+        <a href="{% url 'listar_sennas' %}" class="tarjeta-metrica-link">
+            <div class="tarjeta-metrica">
+                <div class="icono-metrica sennas">🤟</div>
+                <div class="info-metrica">
+                    <h3>{{ total_sennas }}</h3>
+                    <p>Señas Registradas</p>
+                </div>
             </div>
-        </div>
+        </a>
 
-        <div class="tarjeta-metrica">
-            <div class="icono-metrica logros">🏆</div>
-            <div class="info-metrica">
-                <h3>{{ total_logros }}</h3>
-                <p>Logros Disponibles</p>
+        <a href="{% url 'listar_logros' %}" class="tarjeta-metrica-link">
+            <div class="tarjeta-metrica">
+                <div class="icono-metrica logros">🏆</div>
+                <div class="info-metrica">
+                    <h3>{{ total_logros }}</h3>
+                    <p>Logros Disponibles</p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <!-- Sección Inferior: Accesos Rápidos y Últimos Usuarios -->
     <div class="grid-dashboard-inferior">
         
-        <!-- Accesos Rápidos -->
+        <!-- Accesos Rápidos Ampliados -->
         <div class="tarjeta-tabla-container">
             <h2 class="subtitulo-card">Acciones Rápidas</h2>
-            <div class="lista-acciones-rapidas">
-                <a href="{% url 'crear_perfil' %}" class="btn-accion-rapida">
-                    <span>➕ Crear Nuevo Usuario</span>
-                    <small>Registrar un aprendiz o administrador</small>
+            <div class="grid-acciones-rapidas">
+                <a href="{% url 'crear_modulo' %}" class="btn-accion-rapida">
+                    <span>📚 Nuevo Módulo</span>
+                    <small>Crear unidad y sus lecciones</small>
                 </a>
-                <a href="{% url 'listar_perfiles' %}" class="btn-accion-rapida">
-                    <span>📋 Gestionar Usuarios</span>
-                    <small>Ver, buscar y eliminar registros</small>
+
+                <a href="{% url 'crear_senna' %}" class="btn-accion-rapida">
+                    <span>🤟 Nueva Seña</span>
+                    <small>Subir imagen al catálogo LSC</small>
+                </a>
+
+                <a href="{% url 'crear_logro' %}" class="btn-accion-rapida">
+                    <span>🏆 Nuevo Logro</span>
+                    <small>Configurar medalla y XP</small>
+                </a>
+
+                <a href="{% url 'crear_perfil' %}" class="btn-accion-rapida">
+                    <span>👤 Nuevo Usuario</span>
+                    <small>Registrar aprendiz o admin</small>
+                </a>
+
+                <a href="{% url 'listar_modulos' %}" class="btn-accion-rapida">
+                    <span>📝 Gestionar Lecciones</span>
+                    <small>Administrar ejercicios y temas</small>
+                </a>
+
+                <a href="{% url 'ver_ranking' %}" class="btn-accion-rapida">
+                    <span>📊 Ver Ranking</span>
+                    <small>Consultar tabla de posiciones</small>
                 </a>
             </div>
         </div>

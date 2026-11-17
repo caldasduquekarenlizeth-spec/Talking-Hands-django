@@ -1,0 +1,46 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Ranking - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <!-- Encabezado -->
+    <div class="encabezado-ranking">
+        <h1>Ranking</h1>
+        <p class="subtitulo-admin">Aprendices con el mayor puntaje en la app</p>
+    </div>
+
+    <!-- Lista de Posiciones -->
+    <div class="lista-ranking">
+        {% for aprendiz in aprendices %}
+            <div class="tarjeta-ranking-fila {% if forloop.counter == 1 %}top-uno{% elif forloop.counter == 2 %}top-dos{% elif forloop.counter == 3 %}top-tres{% endif %}">
+                
+                <!-- Posición (1°, 2°, 3°...) -->
+                <span class="posicion-numero">{{ forloop.counter }}°</span>
+
+                <!-- Avatar circular -->
+                <div class="avatar-ranking">
+                    {% if aprendiz.foto %}
+                        <img src="{{ aprendiz.foto.url }}" alt="{{ aprendiz.nombre }}" class="img-avatar-circular">
+                    {% else %}
+                        <span>{{ aprendiz.nombre|slice:":2"|upper }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Nombre y Puntaje -->
+                <div class="info-aprendiz-ranking">
+                    <span class="texto-puntaje">{{ aprendiz.nombre }}: {{ aprendiz.puntos_xp }} XP</span>
+                </div>
+
+            </div>
+        {% empty %}
+            <div class="tarjeta-ranking-fila" style="justify-content: center; color: #94a3b8; padding: 40px;">
+                Aún no hay aprendices registrados en el ranking.
+            </div>
+        {% endfor %}
+    </div>
+
+</main>
+{% endblock %}

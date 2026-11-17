@@ -42,6 +42,7 @@ class Perfil(models.Model):
          choices=RolUsuario.choices,
          default=RolUsuario.APRENDIZ,
     )
+    foto = models.ImageField(upload_to='perfiles/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} - {self.puntos_xp}XP"
@@ -87,9 +88,14 @@ class ActividadAdmin(models.Model):
         ('Seña', 'Seña'),
         ('Logro', 'Logro'),
     ]
+    perfil = models.ForeignKey(
+            Perfil,
+            on_delete=models.CASCADE,
+            related_name='actividades',
+            null=True,
+            blank=True
+        )
 
-    # Si tienes sistema de login activo, puedes vincularlo al usuario:
-    # usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     accion = models.CharField(max_length=10, choices=ACCIONES)
     entidad = models.CharField(max_length=20, choices=ENTIDADES)
     detalle = models.CharField(max_length=150)  # Ej: 'Creaste el módulo "Saludos"'

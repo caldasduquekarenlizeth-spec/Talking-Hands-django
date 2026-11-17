@@ -27,4 +27,10 @@ urlpatterns = [
     path('logros/crear/', views.crear_logro, name='crear_logro'),
     path('logros/editar/<int:logro_id>/', views.editar_logro, name='editar_logro'),
     path('logros/eliminar/<int:logro_id>/', views.eliminar_logro, name='eliminar_logro'),
+    path('perfil/', views.ver_perfil, name='ver_perfil'),
+    path('mi-perfil/editar/<int:perfil_id>/', views.editar_perfil_propio, name='editar_perfil_propio'),
+    path('perfil/cambiar-contrasena/', views.cambiar_contrasena, name='cambiar_contrasena'),
+    path('perfil/auditoria/', views.gestion_auditoria, name='gestion_auditoria'),
+    path('perfil/estado-sistema/', views.config_sistema, name='config_sistema'),
+    path('ranking/', views.ver_ranking, name='ver_ranking'),
 ]

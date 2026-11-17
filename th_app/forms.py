@@ -6,14 +6,19 @@ class formsPerfiles(forms.ModelForm):
         model = Perfil
         fields = ['nombre', 'email', 'puntos_xp', 'rol']
 
+class formsEditarPerfilPropio(forms.ModelForm):
+    class Meta:
+        model = Perfil
+        fields = ['nombre', 'foto']
+        labels = {
+            'nombre': 'Nombre de Usuario',
+            'foto': 'Foto de Perfil',
+        }
+
 class formsModulos(forms.ModelForm):
     class Meta:
         model = Modulo
         fields = ['nombre', 'descripcion']
-
-
-from django import forms
-from .models import Leccion, Modulo
 
 class formsLecciones(forms.ModelForm):
     class Meta:

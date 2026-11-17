@@ -1,0 +1,17 @@
+# Carpetas de servidores externos y respaldos de BD
+Servidor/
+*.sql
+*.dump
+db.sqlite3
+
+# Entorno virtual y caché de Python
+env/
+venv/
+__pycache__/
+*.py[cod]
+
+# Archivos multimedia subidos localmente
+media/
+
+# Configuración local de editor
+.vscode/

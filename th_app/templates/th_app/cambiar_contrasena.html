@@ -1,0 +1,51 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Cambiar Contraseña - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'ver_perfil' %}" class="btn-volver">← Volver al perfil</a>
+        <h1>Cambiar Contraseña</h1>
+        <p>Actualiza tu clave de acceso administrativo para mantener segura la plataforma.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container">
+        <form method="POST" class="form-crear-perfil">
+            {% csrf_token %}
+
+            <div class="grupo-campo">
+                <label for="{{ form.old_password.id_for_label }}">Contraseña Actual</label>
+                {{ form.old_password }}
+                {% if form.old_password.errors %}
+                    <span class="error-texto">{{ form.old_password.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.new_password1.id_for_label }}">Nueva Contraseña</label>
+                {{ form.new_password1 }}
+                {% if form.new_password1.errors %}
+                    <span class="error-texto">{{ form.new_password1.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.new_password2.id_for_label }}">Confirmar Nueva Contraseña</label>
+                {{ form.new_password2 }}
+                {% if form.new_password2.errors %}
+                    <span class="error-texto">{{ form.new_password2.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% url 'ver_perfil' %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-guardar">Actualizar Contraseña</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

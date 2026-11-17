@@ -1,0 +1,48 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Historial y Respaldos - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'ver_perfil' %}" class="btn-volver">← Volver al perfil</a>
+        <h1>Historial y Respaldos</h1>
+        <p>Exporta copias de seguridad del contenido educativo o limpia el registro de auditoría.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container" style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Bloque Exportar CSV -->
+        <div class="bloque-opcion-admin">
+            <div>
+                <h3 style="margin: 0 0 4px 0; color: #064e3b; font-size: 16px;">📥 Exportar Catálogo de Señas (CSV)</h3>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Descarga una hoja de cálculo con todas las señas, categorías y descripciones registradas.</p>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="accion" value="exportar_sennas">
+                <button type="submit" class="btn-guardar">Descargar CSV</button>
+            </form>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #f1f5f9; width: 100%; margin: 0;">
+
+        <!-- Bloque Limpiar Historial -->
+        <div class="bloque-opcion-admin">
+            <div>
+                <h3 style="margin: 0 0 4px 0; color: #991b1b; font-size: 16px;">🧹 Vaciar Historial de Actividad</h3>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Actualmente hay <strong>{{ total_registros }}</strong> movimientos registrados en tu bitácora.</p>
+            </div>
+            <form method="POST" onsubmit="return confirm('¿Seguro que deseas borrar todo el historial de actividad?');">
+                {% csrf_token %}
+                <input type="hidden" name="accion" value="limpiar_historial">
+                <button type="submit" class="btn-confirmar-eliminar">Limpiar Bitácora</button>
+            </form>
+        </div>
+
+    </div>
+
+</main>
+{% endblock %}
