@@ -7,7 +7,6 @@
     <title>{% block title %}Talking Hands{% endblock %}</title>
     <meta name="description" content="Plataforma interactiva para aprender lengua de señas.">
 
-    {# Detecta si estamos en una vista del panel de administración o en vistas públicas/aprendiz #}
     {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
         <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
     {% else %}
@@ -17,11 +16,10 @@
     {% block extra_head %}{% endblock %}
 </head>
 
-{% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
-    {# ===================================================================== #}
-    {# DISEÑO 1: PANEL DE ADMINISTRACIÓN (RAMA KAREN)                        #}
-    {# ===================================================================== #}
-    <body class="layout-body">
+<body class="{% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}layout-body{% endif %}">
+
+    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
+        <!-- NAVBAR ADMIN -->
         <header class="header-navbar">
             <div class="marca">
                 <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
@@ -29,21 +27,15 @@
             </div>
 
             <nav class="nav-links">
-                <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name in 'dashboard panel_admin' %}active{% endif %}">
-                    Inicio
-                </a>
+                <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name in 'dashboard panel_admin' %}active{% endif %}">Inicio</a>
 
                 <div class="dropdown-container">
                     <a href="{% url 'listar_perfiles' %}" class="nav-item dropdown-trigger {% if request.resolver_match.url_name in 'listar_perfiles crear_perfil eliminar_perfil listar_modulos' %}active{% endif %}">
                         Gestión <span class="flecha-dropdown">▼</span>
                     </a>
                     <div class="dropdown-menu">
-                        <a href="{% url 'listar_perfiles' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_perfiles' %}active{% endif %}">
-                            👤 Usuarios
-                        </a>
-                        <a href="{% url 'listar_modulos' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_modulos' %}active{% endif %}">
-                            📚 Módulos
-                        </a>
+                        <a href="{% url 'listar_perfiles' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_perfiles' %}active{% endif %}">👤 Usuarios</a>
+                        <a href="{% url 'listar_modulos' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_modulos' %}active{% endif %}">📚 Módulos</a>
                         <a href="{% url 'listar_sennas' %}" class="dropdown-item">🤟 Señas</a>
                         <a href="{% url 'listar_logros' %}" class="dropdown-item">🏆 Logros</a>
                     </div>
@@ -61,7 +53,6 @@
                             <span class="punto-notif-nav"></span>
                         {% endif %}
                     </button>
-
                     <div class="dropdown-notif-nav">
                         <div class="dropdown-notif-header">Actividad reciente</div>
                         {% for act in ultimas_actividades_nav %}
@@ -87,9 +78,62 @@
         </header>
 
         <div class="contenido-principal-layout">
-            {% block content %}{% endblock %}
-        </div>
+    {% else %}
+        <!-- NAVBAR APRENDIZ / PÚBLICO -->
+        <header class="main-header">
+            <div class="nav-container">
+                <a href="{% if user.is_authenticated %}{% url 'dashboard_aprendiz' %}{% else %}/{% endif %}" class="brand-logo">
+                    <img src="{% static 'th_app/images/logo_th.svg' %}" alt="Talking Hands Logo" class="brand-logo-img">
+                    <span class="brand-logo-text">Talking Hands</span>
+                </a>
 
+                <nav class="nav-menu">
+                    {% if user.is_authenticated %}
+                        <ul class="nav-links">
+                            <li><a href="{% url 'dashboard_aprendiz' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard_aprendiz' %}active{% endif %}">Ruta</a></li>
+                            <li><a href="{% url 'diccionario_sennas' %}" class="nav-item {% if request.resolver_match.url_name == 'diccionario_sennas' %}active{% endif %}">Diccionario LSC</a></li>
+                            <li><a href="{% url 'ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'ranking' %}active{% endif %}">Ranking</a></li>
+                        </ul>
+
+                        <div class="nav-user-actions">
+                            {% if user.perfil %}
+                                <div class="nav-xp-badge">⚡ <span>{{ user.perfil.puntos_xp }} XP</span></div>
+                            {% endif %}
+                            <a href="{% url 'perfil_y_ranking' %}" class="nav-username" title="Mi Perfil">
+                                <span class="user-avatar-mini">👤</span>
+                                <span>{{ user.username }}</span>
+                            </a>
+                            <form action="{% url 'logout' %}" method="POST" class="logout-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-logout" title="Cerrar sesión">Salir</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <div class="nav-guest-actions">
+                            <a href="{% url 'login' %}" class="btn-text">Iniciar sesión</a>
+                            <a href="{% url 'registro' %}" class="btn btn-primary btn-sm">Registrarse</a>
+                        </div>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
+
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <main class="content-area">
+    {% endif %}
+
+        <!-- ÚNICO BLOQUE DE CONTENIDO -->
+        {% block content %}{% endblock %}
+
+    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
+        </div>
         <footer class="footer-landing">
             <div class="contenedor-footer">
                 <div class="columna-footer-marca">
@@ -97,11 +141,8 @@
                         <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo-footer" />
                         <span>Talking <strong>Hands</strong></span>
                     </div>
-                    <p>
-                        Facilitando el acceso a la Lengua de Señas Colombiana a través de la educación lúdica, accesible y gratuita.
-                    </p>
+                    <p>Facilitando el acceso a la Lengua de Señas Colombiana a través de la educación lúdica, accesible y gratuita.</p>
                 </div>
-
                 <div class="columna-footer-links">
                     <h3>Mapa del sitio</h3>
                     <ul>
@@ -110,7 +151,6 @@
                         <li><a href="{% url 'listar_logros' %}">Logros</a></li>
                     </ul>
                 </div>
-
                 <div class="columna-footer-links">
                     <h3>Contacto</h3>
                     <ul>
@@ -118,16 +158,17 @@
                     </ul>
                 </div>
             </div>
-
             <div class="copyright-bar">
                 <p>© 2026 Talking Hands. Creado con amor para la comunidad sorda y oyente de Colombia.</p>
             </div>
         </footer>
-    </body>
+    {% else %}
+        </main>
+        <footer class="footer-simple">
+            <p>© 2026 Aprendizaje de Señas</p>
+        </footer>
+    {% endif %}
 
-{% else %}
-    {# ===================================================================== #}
-    {# DISEÑO 2: PORTAL PÚBLICO Y APRENDIZ (RAMA GABRIEL)                    #}
-    {# ===================================================================== #}
-    <body>
-        <header class="main-header">
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

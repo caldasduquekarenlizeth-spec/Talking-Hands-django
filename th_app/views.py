@@ -20,7 +20,29 @@ from .forms import (
     formsLogros,
     formsEditarPerfilPropio,
 )
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.decorators import login_required, user_passes_test
 
+
+def es_administrador(user):
+    if not user.is_authenticated:
+        return False
+    return (
+        user.is_staff
+        or user.is_superuser
+        or user.groups.filter(name='Administrador').exists()
+        or (hasattr(user, 'perfil') and user.perfil.rol == 'ADMIN')
+    )
+
+
+def solo_admin(view_func):
+    @login_required
+    def _wrapped_view(request, *args, **kwargs):
+        if not es_administrador(request.user):
+            messages.error(request, "No tienes permisos para acceder al panel de administración.")
+            return redirect('dashboard_aprendiz')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
 
 # ==========================================
 # UTILIDADES Y AUDITORÍA
@@ -57,6 +79,8 @@ def registro_aprendiz(request):
             return redirect("registro")
 
         user = User.objects.create_user(username=username, email=email, password=password)
+        grupo_aprendiz, _ = Group.objects.get_or_create(name='Aprendiz')
+        user.groups.add(grupo_aprendiz)
 
         Perfil.objects.create(
             usuario=user,
@@ -76,7 +100,7 @@ def registro_aprendiz(request):
 # ==========================================
 # VISTAS DE ADMINISTRACIÓN (PANEL ADMIN)
 # ==========================================
-
+@solo_admin
 def dashboard(request):
     total_usuarios = Perfil.objects.count()
     total_modulos = Modulo.objects.count()
@@ -93,7 +117,7 @@ def dashboard(request):
     }
     return render(request, 'th_app/inicio_admin.html', context)
 
-
+@solo_admin
 def listar_perfiles(request):
     query = request.GET.get('q', '').strip()
     if query:
@@ -108,7 +132,7 @@ def listar_perfiles(request):
         'query': query
     })
 
-
+@solo_admin
 def crear_perfil(request):
     form = formsPerfiles(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -122,7 +146,7 @@ def crear_perfil(request):
         'titulo': "Crear Nuevo Perfil",
     })
 
-
+@solo_admin
 def editar_perfil(request, perfil_id):
     perfil = get_object_or_404(Perfil, id=perfil_id)
     form = formsPerfiles(request.POST or None, instance=perfil)
@@ -138,7 +162,7 @@ def editar_perfil(request, perfil_id):
         'titulo': f"Editar a {perfil.nombre}",
     })
 
-
+@solo_admin
 def eliminar_perfil(request, perfil_id):
     perfil = get_object_or_404(Perfil, id=perfil_id)
     if request.method == 'POST':
@@ -150,7 +174,7 @@ def eliminar_perfil(request, perfil_id):
 
     return render(request, 'th_app/eliminar_perfil.html', {'perfil': perfil})
 
-
+@solo_admin
 def listar_modulos(request):
     query = request.GET.get('q', '').strip()
     if query:
@@ -165,7 +189,7 @@ def listar_modulos(request):
         'query': query
     })
 
-
+@solo_admin
 def crear_modulo(request):
     form = formsModulos(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -179,7 +203,7 @@ def crear_modulo(request):
         'titulo': "Crear Nuevo Modulo",
     })
 
-
+@solo_admin
 def editar_modulo(request, modulo_id):
     modulo = get_object_or_404(Modulo, id=modulo_id)
     form = formsModulos(request.POST or None, instance=modulo)
@@ -194,7 +218,7 @@ def editar_modulo(request, modulo_id):
         'titulo': f"Editar a {modulo.nombre}",
     })
 
-
+@solo_admin
 def eliminar_modulo(request, modulo_id):
     modulo = get_object_or_404(Modulo, id=modulo_id)
     if request.method == 'POST':
@@ -206,7 +230,7 @@ def eliminar_modulo(request, modulo_id):
 
     return render(request, 'th_app/eliminar_modulo.html', {'modulo': modulo})
 
-
+@solo_admin
 def ver_lecciones(request, modulo_id):
     modulo = get_object_or_404(Modulo, id=modulo_id)
     lecciones = Leccion.objects.filter(id_modulo=modulo).order_by('id')
@@ -216,7 +240,7 @@ def ver_lecciones(request, modulo_id):
         'lecciones': lecciones,
     })
 
-
+@solo_admin
 def crear_leccion(request):
     modulo_id = request.GET.get('modulo')
     modulo = get_object_or_404(Modulo, id=modulo_id) if modulo_id else None
@@ -238,7 +262,7 @@ def crear_leccion(request):
         'titulo': "Crear Nueva Lección",
     })
 
-
+@solo_admin
 def editar_leccion(request, leccion_id):
     leccion = get_object_or_404(Leccion, id=leccion_id)
     modulo = leccion.id_modulo
@@ -259,7 +283,7 @@ def editar_leccion(request, leccion_id):
         'titulo': f"Editar a {leccion.nombre}",
     })
 
-
+@solo_admin
 def eliminar_leccion(request, leccion_id):
     leccion = get_object_or_404(Leccion, id=leccion_id)
     modulo_id = leccion.id_modulo.id
@@ -272,7 +296,7 @@ def eliminar_leccion(request, leccion_id):
 
     return render(request, 'th_app/eliminar_leccion.html', {'leccion': leccion})
 
-
+@solo_admin
 def ver_ejercicios(request, leccion_id):
     leccion = get_object_or_404(Leccion, id=leccion_id)
     ejercicios = Ejercicio.objects.filter(leccion=leccion).order_by('id')
@@ -282,7 +306,7 @@ def ver_ejercicios(request, leccion_id):
         'ejercicios': ejercicios,
     })
 
-
+@solo_admin
 def crear_ejercicio(request):
     leccion_id = request.GET.get('leccion')
     leccion = get_object_or_404(Leccion, id=leccion_id) if leccion_id else None
@@ -303,7 +327,7 @@ def crear_ejercicio(request):
         'leccion': leccion
     })
 
-
+@solo_admin
 def editar_ejercicio(request, ejercicio_id):
     ejercicio = get_object_or_404(Ejercicio, id=ejercicio_id)
     leccion = ejercicio.leccion
@@ -324,7 +348,7 @@ def editar_ejercicio(request, ejercicio_id):
         'titulo': f"Editar Ejercicio: {ejercicio.pregunta[:30]}...",
     })
 
-
+@solo_admin
 def eliminar_ejercicio(request, ejercicio_id):
     ejercicio = get_object_or_404(Ejercicio, id=ejercicio_id)
     leccion_id = ejercicio.leccion.id
@@ -338,7 +362,7 @@ def eliminar_ejercicio(request, ejercicio_id):
 
     return render(request, 'th_app/eliminar_ejercicio.html', {'ejercicio': ejercicio})
 
-
+@solo_admin
 def listar_sennas(request):
     query = request.GET.get('q', '').strip()
     categoria = request.GET.get('categoria', '').strip()
@@ -361,7 +385,7 @@ def listar_sennas(request):
         'categoria': categorias,
     })
 
-
+@solo_admin
 def crear_senna(request):
     if request.method == 'POST':
         form = formsSennas(request.POST, request.FILES)
@@ -378,7 +402,7 @@ def crear_senna(request):
         'titulo': 'Nueva Seña'
     })
 
-
+@solo_admin
 def editar_senna(request, senna_id):
     senna = get_object_or_404(Senna, id=senna_id)
 
@@ -398,7 +422,7 @@ def editar_senna(request, senna_id):
         'titulo': f'Editar Seña: {senna.nombre}'
     })
 
-
+@solo_admin
 def eliminar_senna(request, senna_id):
     senna = get_object_or_404(Senna, id=senna_id)
     if request.method == 'POST':
@@ -412,7 +436,7 @@ def eliminar_senna(request, senna_id):
 
     return render(request, 'th_app/eliminar_senna.html', {'senna': senna})
 
-
+@solo_admin
 def listar_logros(request):
     logros = Logro.objects.all().order_by('id')
     total_logros = logros.count()
@@ -426,7 +450,7 @@ def listar_logros(request):
         'total_lecciones': total_lecciones,
     })
 
-
+@solo_admin
 def crear_logro(request):
     if request.method == 'POST':
         form = formsLogros(request.POST)
@@ -443,7 +467,7 @@ def crear_logro(request):
         'titulo': 'Crear Nuevo Logro'
     })
 
-
+@solo_admin
 def editar_logro(request, logro_id):
     logro = get_object_or_404(Logro, id=logro_id)
 
@@ -463,7 +487,7 @@ def editar_logro(request, logro_id):
         'titulo': f'Editar Logro: {logro.nombre}'
     })
 
-
+@solo_admin
 def eliminar_logro(request, logro_id):
     logro = get_object_or_404(Logro, id=logro_id)
 
@@ -476,7 +500,7 @@ def eliminar_logro(request, logro_id):
 
     return render(request, 'th_app/eliminar_logro.html', {'logro': logro})
 
-
+@solo_admin
 def ver_perfil(request):
     perfil = Perfil.objects.filter(rol='ADMIN').first() or Perfil.objects.first()
 
@@ -494,7 +518,7 @@ def ver_perfil(request):
         'actividades': actividades,
     })
 
-
+@solo_admin
 def editar_perfil_propio(request, perfil_id):
     perfil = get_object_or_404(Perfil, id=perfil_id)
 
@@ -513,7 +537,7 @@ def editar_perfil_propio(request, perfil_id):
         'perfil': perfil,
     })
 
-
+@solo_admin
 def cambiar_contrasena(request):
     usuario = request.user if request.user.is_authenticated else (
         User.objects.filter(is_superuser=True).first() or User.objects.first()
@@ -537,7 +561,7 @@ def cambiar_contrasena(request):
 
     return render(request, 'th_app/cambiar_contrasena.html', {'form': form})
 
-
+@solo_admin
 def gestion_auditoria(request):
     if request.method == 'POST':
         accion = request.POST.get('accion')
@@ -561,7 +585,7 @@ def gestion_auditoria(request):
     total_registros = ActividadAdmin.objects.count()
     return render(request, 'th_app/gestion_auditoria.html', {'total_registros': total_registros})
 
-
+@solo_admin
 def config_sistema(request):
     modo_mantenimiento = request.session.get('modo_mantenimiento', False)
 
@@ -577,7 +601,7 @@ def config_sistema(request):
         'modo_mantenimiento': modo_mantenimiento
     })
 
-
+@solo_admin
 def ver_ranking(request):
     aprendices = Perfil.objects.filter(rol='APRENDIZ').order_by('-puntos_xp', 'nombre')
 
@@ -592,7 +616,8 @@ def ver_ranking(request):
 
 @login_required
 def dashboard_aprendiz(request):
-    if request.user.is_staff:
+    # Si el usuario pertenece al grupo Administrador o tiene rol ADMIN, va a su panel
+    if es_administrador(request.user):
         return redirect("panel_admin")
 
     perfil, _ = Perfil.objects.get_or_create(
@@ -605,7 +630,8 @@ def dashboard_aprendiz(request):
         }
     )
 
-    ranking = Perfil.objects.order_by("-puntos_xp")[:10]
+    # Filtramos solo aprendices para que los administradores no aparezcan en el podio
+    ranking = Perfil.objects.filter(rol="APRENDIZ").order_by("-puntos_xp")[:10]
     modulos = Modulo.objects.all()
     completadas_ids = set(perfil.lecciones_completadas.values_list("id", flat=True))
 
@@ -648,8 +674,10 @@ def dashboard_aprendiz(request):
     }
     return render(request, "th_app/aprendiz/dashboard.html", context)
 
-
+@login_required
 def ranking(request):
+    if es_administrador(request.user):
+        return redirect("ver_ranking")
     ranking = Perfil.objects.order_by("-puntos_xp")
 
     context = {
