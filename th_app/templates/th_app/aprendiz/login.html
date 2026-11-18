@@ -17,16 +17,6 @@
         <h2 class="auth-title">Iniciar Sesión</h2>
     </div>
 
-    {% if messages %}
-      <div class="messages-container">
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
     <form method="POST" class="auth-form">
         {% csrf_token %}
         

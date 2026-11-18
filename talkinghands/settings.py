@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-u&%p(#g+atlzze4oh*yotbnn-0belz-)xth*gx*gcr%+_g778h'
+SECRET_KEY = 'django-insecure-f*kbtijm1owqkef*k*-es1)a!z-klev!4b+l59s-lu0e2_b83p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -60,9 +60,13 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'th_app.context_processors.datos_globales_admin',
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -80,8 +84,8 @@ DATABASES = {
         'NAME': 'talkinghands',
         'USER': 'postgres',
         'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': 'localhost', 
+        'PORT': '',   
     }
 }
 
@@ -122,6 +126,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'th_app' / 'static',
+]
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -131,3 +139,11 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard_aprendiz'
+LOGOUT_REDIRECT_URL = 'inicio'

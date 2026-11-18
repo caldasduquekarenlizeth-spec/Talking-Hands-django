@@ -1,0 +1,53 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Gestionar lecciones - {{ modulo.nombre }}{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'listar_modulos' %}" class="btn-volver">← Volver a módulos</a>
+        <h1 style="color: #064e3b; margin-top: 6px;">Gestionar lecciones</h1>
+        <p class="subtitulo-admin">Módulo {{ modulo.id }}: {{ modulo.nombre }}</p>
+    </div>
+
+    <!-- Lista de Lecciones del Módulo -->
+    <div class="lista-modulos-container">
+        {% for leccion in lecciones %}
+            <div class="tarjeta-modulo">
+                <div class="numero-modulo">
+                    {{ forloop.counter }}
+                </div>
+
+                <div class="info-modulo">
+                    <h2>
+                        <a href="{% url 'ver_ejercicios' leccion.id %}" style="text-decoration: none; color: inherit;">
+                            Lección {{ forloop.counter }}: {{ leccion.nombre }}
+                        </a>
+                        <span class="badge-tipo-leccion">Lección</span>
+                    </h2>
+                    <p>{{ leccion.descripcion }}</p>
+                </div>
+
+                <div class="acciones-modulo">
+                    <a href="{% url 'editar_leccion' leccion.id %}" class="btn-editar-modulo">✏️ Editar</a>
+                    <a href="{% url 'eliminar_leccion' leccion.id %}" class="btn-eliminar-modulo">🗑️ Eliminar</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="tarjeta-modulo" style="justify-content: center; color: #94a3b8; padding: 40px;">
+                <p>Este módulo aún no tiene lecciones o prácticas registradas.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Botón verde inferior para crear lección vinculada a este módulo -->
+    <div style="margin-top: 24px; margin-bottom: 40px;">
+        <a href="{% url 'crear_leccion' %}?modulo={{ modulo.id }}" class="btn-crear-verde">
+            ➕ Crear nueva lección
+        </a>
+    </div>
+
+</main>
+{% endblock %}

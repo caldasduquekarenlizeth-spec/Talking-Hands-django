@@ -1,0 +1,76 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Logros y Medallas - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-logros">
+        <h1>Logros y Medallas</h1>
+        <p class="subtitulo-admin">Edita, borra o añade nuevos logros y medallas.</p>
+    </div>
+
+    <div class="layout-logros-grid">
+        
+        <!-- Columna Izquierda: Grilla de Logros -->
+        <div class="grilla-tarjetas-logros">
+            {% for logro in logros %}
+                <div class="tarjeta-logro">
+                    <!-- Icono circular según el tipo -->
+                    <div class="icono-circulo-logro tipo-{{ logro.tipo|lower }}">
+                        {% if logro.tipo == 'LEC' %}🏅
+                        {% elif logro.tipo == 'RAC' %}🔥
+                        {% elif logro.tipo == 'SEN' %}🛡️
+                        {% elif logro.tipo == 'NIV' %}⭐
+                        {% elif logro.tipo == 'DIF' %}🔒
+                        {% elif logro.tipo == 'EXP' %}🧭
+                        {% else %}🏆{% endif %}
+                    </div>
+
+                    <h3 class="titulo-logro">{{ logro.nombre }}</h3>
+                    <p class="desc-logro">{{ logro.descripcion }}</p>
+                    <span class="xp-badge-logro">+{{ logro.puntos_xp }} XP • {{ logro.get_tipo_display }}</span>
+
+                    <div class="acciones-tarjeta-logro">
+                        <a href="{% url 'editar_logro' logro.id %}" class="btn-editar-logro-verde">Editar</a>
+                        <a href="{% url 'eliminar_logro' logro.id %}" class="btn-eliminar-logro-sutil" title="Eliminar logro">🗑️</a>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="tarjeta-logro" style="grid-column: 1 / -1; padding: 48px; color: #94a3b8;">
+                    <p>No hay logros o medallas registrados todavía.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Columna Derecha: Resumen de Recompensas + Botón Añadir -->
+        <aside class="panel-lateral-logros">
+            <div class="tarjeta-resumen-recompensas">
+                <h3>Resumen de Recompensas</h3>
+
+                <div class="fila-resumen">
+                    <span>Total de logros</span>
+                    <strong>{{ total_logros }}</strong>
+                </div>
+
+                <div class="fila-resumen">
+                    <span>Puntaje máximo</span>
+                    <strong>{{ puntaje_maximo }} XP</strong>
+                </div>
+
+                <div class="fila-resumen">
+                    <span>Total de lecciones</span>
+                    <strong>{{ total_lecciones }}</strong>
+                </div>
+            </div>
+
+            <div class="contenedor-btn-anadir-logro">
+                <a href="{% url 'crear_logro' %}" class="btn-anadir-logro-verde">Añadir</a>
+            </div>
+        </aside>
+
+    </div>
+
+</main>
+{% endblock %}

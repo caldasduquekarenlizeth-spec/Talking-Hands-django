@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Modulo, Leccion, Senna, Ejercicio, Logro, Perfil
-
+from .models import Perfil, Modulo, Leccion, Ejercicio, Senna, Logro, ActividadAdmin
 # Register your models here.
+admin.site.register(Perfil)
 admin.site.register(Modulo)
 admin.site.register(Leccion)
-admin.site.register(Senna)
 admin.site.register(Ejercicio)
+admin.site.register(Senna)
 admin.site.register(Logro)
-admin.site.register(Perfil)
+admin.site.register(ActividadAdmin)

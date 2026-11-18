@@ -1,93 +1,181 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Talking Hands{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'th_app/css/styles.css' %}">
+    <meta name="description" content="Plataforma interactiva para aprender lengua de señas.">
+
+    {% if user.is_authenticated and user.is_staff and not '/aprendiz/' in request.path %}
+        <link rel="stylesheet" href="{% static 'th_app/css/inicio.css' %}">
+    {% else %}
+        <link rel="stylesheet" href="{% static 'th_app/css/styles.css' %}">
+    {% endif %}
+
+    {% block extra_head %}{% endblock %}
 </head>
 
-<body>
+<body class="{% if user.is_authenticated and user.is_staff and not '/aprendiz/' in request.path %}layout-body{% endif %}">
 
-<header class="main-header">
-    <div class="nav-container">
-        <!-- Logo principal -->
-        <a href="{% if user.is_authenticated %}{% url 'dashboard_aprendiz' %}{% else %}/{% endif %}" class="brand-logo">
-            <img src="{% static 'th_app/images/logo_th.svg' %}" alt="Talking Hands Logo" class="brand-logo-img">
-            <span class="brand-logo-text">Talking Hands</span>
-        </a>
+    {% if user.is_authenticated and user.is_staff and not '/aprendiz/' in request.path %}
+        <!-- NAVBAR ADMIN -->
+        <header class="header-navbar">
+            <div class="marca">
+                <img src="{% static 'th_app/images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
+                <span>Talking Hands</span>
+            </div>
 
-        <!-- Header dinámico según sesión -->
-        <nav class="nav-menu">
-            {% if user.is_authenticated %}
-                <!-- HEADER 1: USUARIO AUTENTICADO -->
-                <ul class="nav-links">
-                    <li>
-                        <a href="{% url 'dashboard_aprendiz' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard_aprendiz' %}active{% endif %}">Ruta</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'diccionario_sennas' %}" class="nav-item {% if request.resolver_match.url_name == 'diccionario_sennas' %}active{% endif %}">Diccionario LSC</a> 
-                    </li>
-                    <li>
-                        <a href="{% url 'ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'ranking' %}active{% endif %}">Ranking</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'logros' %}" class="nav-item {% if request.resolver_match.url_name == 'logros' %}active{% endif %}">Logros</a>
-                    </li>
-                </ul>
+            <nav class="nav-links">
+                <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name in 'dashboard panel_admin' %}active{% endif %}">Inicio</a>
 
-                <div class="nav-user-actions">
-                    {% if user.perfil %}
-                        <div class="nav-xp-badge">
-                            ⚡ <span>{{ user.perfil.puntos_xp }} XP</span>
+                <div class="dropdown-container">
+                    <a href="{% url 'listar_perfiles' %}" class="nav-item dropdown-trigger {% if request.resolver_match.url_name in 'listar_perfiles crear_perfil eliminar_perfil listar_modulos' %}active{% endif %}">
+                        Gestión <span class="flecha-dropdown">▼</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="{% url 'listar_perfiles' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_perfiles' %}active{% endif %}">👤 Usuarios</a>
+                        <a href="{% url 'listar_modulos' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_modulos' %}active{% endif %}">📚 Módulos</a>
+                        <a href="{% url 'listar_sennas' %}" class="dropdown-item">🤟 Señas</a>
+                        <a href="{% url 'listar_logros' %}" class="dropdown-item">🏆 Logros</a>
+                    </div>
+                </div>
+
+                <a href="{% url 'ver_perfil' %}" class="nav-item">Perfil</a>
+                <a href="{% url 'ver_ranking' %}" class="nav-item">Ranking</a>
+            </nav>
+
+            <div class="nav-acciones-derecha">
+                <div class="nav-notif-wrapper">
+                    <button type="button" class="btn-campana-nav" title="Actividad reciente">
+                        🔔
+                        {% if ultimas_actividades_nav %}
+                            <span class="punto-notif-nav"></span>
+                        {% endif %}
+                    </button>
+                    <div class="dropdown-notif-nav">
+                        <div class="dropdown-notif-header">Actividad reciente</div>
+                        {% for act in ultimas_actividades_nav %}
+                            <div class="dropdown-notif-item">
+                                <p>{{ act.detalle }}</p>
+                                <span>Hace {{ act.fecha|timesince }}</span>
+                            </div>
+                        {% empty %}
+                            <div class="dropdown-notif-vacio">Sin actividad reciente</div>
+                        {% endfor %}
+                        <a href="{% url 'ver_perfil' %}" class="dropdown-notif-footer">Ver historial completo →</a>
+                    </div>
+                    
+                </div>
+
+                <a href="{% url 'ver_perfil' %}" class="avatar-nav-perfil" title="Ir a mi perfil">
+                    {% if perfil_nav.foto %}
+                        <img src="{{ perfil_nav.foto.url }}" alt="{{ perfil_nav.nombre }}" class="img-avatar-circular">
+                    {% else %}
+                        {{ perfil_nav.nombre|default:"AD"|slice:":2"|upper }}
+                    {% endif %}
+                </a>
+
+                <form action="{% url 'logout' %}" method="POST" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout" title="Cerrar sesión">Salir</button>
+                </form>
+            </div>
+        </header>
+
+        <div class="contenido-principal-layout">
+    {% else %}
+        <!-- NAVBAR APRENDIZ / PÚBLICO -->
+        <header class="main-header">
+            <div class="nav-container">
+                <a href="{% if user.is_authenticated %}{% url 'dashboard_aprendiz' %}{% else %}/{% endif %}" class="brand-logo">
+                    <img src="{% static 'th_app/images/logo_th.svg' %}" alt="Talking Hands Logo" class="brand-logo-img">
+                    <span class="brand-logo-text">Talking Hands</span>
+                </a>
+
+                <nav class="nav-menu">
+                    {% if user.is_authenticated %}
+                        <ul class="nav-links">
+                            <li><a href="{% url 'dashboard_aprendiz' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard_aprendiz' %}active{% endif %}">Ruta</a></li>
+                            <li><a href="{% url 'diccionario_sennas' %}" class="nav-item {% if request.resolver_match.url_name == 'diccionario_sennas' %}active{% endif %}">Diccionario LSC</a></li>
+                            <li><a href="{% url 'ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'ranking' %}active{% endif %}">Ranking</a></li> 
+                            <li><a href="{% url 'mis_logros' %}" class="nav-item {% if request.resolver_match.url_name == 'mis_logros' %}active{% endif %}">Logros</a></li>
+                        </ul>
+
+                        <div class="nav-user-actions">
+                            {% if user.perfil %}
+                                <div class="nav-xp-badge">⚡ <span>{{ user.perfil.puntos_xp }} XP</span></div>
+                            {% endif %}
+                            <a href="{% url 'perfil_y_ranking' %}" class="nav-username" title="Mi Perfil">
+                                <span class="user-avatar-mini">👤</span>
+                                <span>{{ user.username }}</span>
+                            </a>
+                            <form action="{% url 'logout' %}" method="POST" class="logout-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-logout" title="Cerrar sesión">Salir</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <div class="nav-guest-actions">
+                            <a href="{% url 'login' %}" class="btn-text">Iniciar sesión</a>
+                            <a href="{% url 'registro' %}" class="btn btn-primary btn-sm">Registrarse</a>
                         </div>
                     {% endif %}
-
-                    <a href="{% url 'perfil_y_ranking' %}" class="nav-username" title="Mi Perfil">
-                        <span class="user-avatar-mini">👤</span>
-                        <span>{{ user.username }}</span>
-                    </a>
-
-                    <form action="{% url 'logout' %}" method="POST" class="logout-form">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-logout" title="Cerrar sesión">Salir</button>
-                    </form>
-                </div>
-            {% else %}
-                <!-- HEADER 2: USUARIO NO AUTENTICADO -->
-                <div class="nav-guest-actions">
-                    <a href="{% url 'login' %}" class="btn-text">Iniciar sesión</a>
-                    <a href="{% url 'registro' %}" class="btn btn-primary btn-sm">Registrarse</a>
-                </div>
-            {% endif %}
-        </nav>
-    </div>
-</header>
-
-
-{% if messages %}
-    <div class="messages-container">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
+                </nav>
             </div>
-        {% endfor %}
-    </div>
-{% endif %}
+        </header>
 
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-<main class="content-area">
-    {% block content %}
-    {% endblock %}
-</main>
+        <main class="content-area">
+    {% endif %}
 
-<footer class="footer-simple">
-    <p>© 2026 Aprendizaje de Señas</p>
-</footer>
+        <!-- ÚNICO BLOQUE DE CONTENIDO -->
+        {% block content %}{% endblock %}
 
-{% block extra_js %}
-{% endblock %}
+    {% if user.is_authenticated and user.is_staff and not '/aprendiz/' in request.path %}
+        </div>
+        <footer class="footer-landing">
+            <div class="contenedor-footer">
+                <div class="columna-footer-marca">
+                    <div class="marca-footer">
+                        <img src="{% static 'th_app/images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo-footer" />
+                        <span>Talking <strong>Hands</strong></span>
+                    </div>
+                    <p>Facilitando el acceso a la Lengua de Señas Colombiana a través de la educación lúdica, accesible y gratuita.</p>
+                </div>
+                <div class="columna-footer-links">
+                    <h3>Mapa del sitio</h3>
+                    <ul>
+                        <li><a href="{% url 'listar_modulos' %}">Módulos</a></li>
+                        <li><a href="{% url 'listar_sennas' %}">Señas</a></li>
+                        <li><a href="{% url 'listar_logros' %}">Logros</a></li>
+                    </ul>
+                </div>
+                <div class="columna-footer-links">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li><a href="#">Soporte</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright-bar">
+                <p>© 2026 Talking Hands. Creado con amor para la comunidad sorda y oyente de Colombia.</p>
+            </div>
+        </footer>
+    {% else %}
+        </main>
+        <footer class="footer-simple">
+            <p>© 2026 Aprendizaje de Señas</p>
+        </footer>
+    {% endif %}
 
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

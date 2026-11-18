@@ -1,0 +1,50 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Eliminar Perfil - Talking Hands{% endblock %}
+
+{% block content %}
+<!-- Navbar Superior -->
+
+<!-- Contenedor Principal de Confirmación -->
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'listar_perfiles' %}" class="btn-volver">← Volver a usuarios</a>
+    </div>
+
+    <div class="tarjeta-eliminar-container">
+        <div class="icono-advertencia">⚠️</div>
+
+        <h2>Confirmar Eliminación</h2>
+        <p class="texto-advertencia">
+            ¿Estás seguro de que deseas eliminar este perfil? Esta acción no se puede deshacer y borrará permanentemente los datos del usuario.
+        </p>
+
+        <!-- Resumen del Perfil a Eliminar -->
+        <div class="resumen-perfil-eliminar">
+            <div class="avatar-eliminar">
+                {{ perfil.nombre|slice:":1"|upper }}
+            </div>
+            <div class="detalles-perfil-eliminar">
+                <h3>{{ perfil.nombre }}</h3>
+                <p>{{ perfil.email }}</p>
+                <span class="badge-rol {% if perfil.rol == 'ADMIN' %}admin{% else %}aprendiz{% endif %}">
+                    {% if perfil.rol == 'ADMIN' %}Admin{% else %}Aprendiz{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Formulario POST de confirmación -->
+        <form method="POST" class="form-eliminar">
+            {% csrf_token %}
+            
+            <div class="acciones-eliminar">
+                <a href="{% url 'listar_perfiles' %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-confirmar-eliminar">Sí, Eliminar Perfil</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

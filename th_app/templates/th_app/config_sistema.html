@@ -1,0 +1,41 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Estado de la Plataforma - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'ver_perfil' %}" class="btn-volver">← Volver al perfil</a>
+        <h1>Estado de la Plataforma</h1>
+        <p>Controla la disponibilidad del entorno de aprendizaje para los estudiantes.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container">
+        <form method="POST" class="form-crear-perfil">
+            {% csrf_token %}
+
+            <div class="bloque-opcion-admin">
+                <div>
+                    <h3 style="margin: 0 0 4px 0; color: #064e3b; font-size: 16px;">🛠️ Modo Mantenimiento</h3>
+                    <p style="margin: 0; color: #64748b; font-size: 13px;">
+                        Si está activo, los aprendices verán un aviso de actualización mientras gestionas el contenido.
+                    </p>
+                </div>
+
+                <label class="switch-admin">
+                    <input type="checkbox" name="modo_mantenimiento" {% if modo_mantenimiento %}checked{% endif %}>
+                    <span class="slider-admin"></span>
+                </label>
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% url 'ver_perfil' %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-guardar">Guardar Estado</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

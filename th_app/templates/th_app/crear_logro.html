@@ -1,0 +1,61 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}{{ titulo|default:"Crear Logro" }} - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'listar_logros' %}" class="btn-volver">← Volver a logros</a>
+        <h1>{{ titulo|default:"Crear Nuevo Logro" }}</h1>
+        <p>Configura el nombre, la recompensa en XP y la condición para desbloquear esta medalla.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container">
+        <form method="POST" class="form-crear-perfil">
+            {% csrf_token %}
+
+            <div class="grupo-campo">
+                <label for="{{ form.nombre.id_for_label }}">Nombre del Logro</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                    <span class="error-texto">{{ form.nombre.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grid-dos-columnas">
+                <div class="grupo-campo">
+                    <label for="{{ form.tipo.id_for_label }}">Tipo de Logro</label>
+                    {{ form.tipo }}
+                    {% if form.tipo.errors %}
+                        <span class="error-texto">{{ form.tipo.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ form.puntos_xp.id_for_label }}">Puntos XP</label>
+                    {{ form.puntos_xp }}
+                    {% if form.puntos_xp.errors %}
+                        <span class="error-texto">{{ form.puntos_xp.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}
+                    <span class="error-texto">{{ form.descripcion.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% url 'listar_logros' %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-guardar">Guardar Logro</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

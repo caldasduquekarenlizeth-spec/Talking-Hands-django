@@ -1,0 +1,65 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Crear Lección - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% if modulo %}{% url 'ver_lecciones' modulo.id %}{% else %}{% url 'listar_modulos' %}{% endif %}" class="btn-volver">
+            ← Volver a lecciones
+        </a>
+        <h1>{{ titulo }}</h1>
+        <p>Registra la información de la lección o práctica para los aprendices.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container">
+        <form method="POST" class="form-crear-perfil">
+            {% csrf_token %}
+
+            <div class="grupo-campo">
+                <label for="{{ form.nombre.id_for_label }}">Nombre de la Lección</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                    <span class="error-texto">{{ form.nombre.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.descripcion.id_for_label }}">Descripción</label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}
+                    <span class="error-texto">{{ form.descripcion.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grid-dos-columnas">
+                <div class="grupo-campo">
+                    <label for="{{ form.puntos_xp.id_for_label }}">Puntos XP de Recompensa</label>
+                    {{ form.puntos_xp }}
+                    {% if form.puntos_xp.errors %}
+                        <span class="error-texto">{{ form.puntos_xp.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ form.id_modulo.id_for_label }}">Módulo al que Pertenece</label>
+                    {{ form.id_modulo }}
+                    {% if form.id_modulo.errors %}
+                        <span class="error-texto">{{ form.id_modulo.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% if modulo %}{% url 'ver_lecciones' modulo.id %}{% else %}{% url 'listar_modulos' %}{% endif %}" class="btn-cancelar">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn-guardar">Guardar Lección</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

@@ -41,21 +41,19 @@ TIPOS_EJERCICIO = [
 class formsEjercicios(forms.ModelForm):
     class Meta:
         model = Ejercicio
-        fields = ['pregunta', 'tipo', 'respuesta_correcta', 'leccion']
-        labels = {
-            'pregunta': 'Pregunta / Enunciado del Ejercicio',
-            'tipo': 'Tipo de Ejercicio',
-            'respuesta_correcta': 'Respuesta Correcta',
-            'leccion': 'Lección Asociada',
-        }
+        fields = ['leccion', 'pregunta', 'tipo', 'opciones', 'opcion_correcta']
         widgets = {
-            'tipo': forms.Select(choices=TIPOS_EJERCICIO),
+            'leccion': forms.Select(attrs={'class': 'form-control'}),
+            'pregunta': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: ¿Qué seña corresponde a la letra A?'}),
+            'tipo': forms.Select(attrs={'class': 'form-control'}),
+            'opciones': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'opcion_correcta': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['leccion'].queryset = Leccion.objects.all()
         self.fields['leccion'].empty_label = "-- Selecciona una Lección --"
+        self.fields['opcion_correcta'].empty_label = "-- Selecciona la Seña Correcta --"
 
 CATEGORIAS_SENNA = [
     ('', '-- Selecciona una categoría --'),

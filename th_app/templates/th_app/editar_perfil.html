@@ -1,0 +1,56 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Editar Mi Perfil - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <div class="encabezado-formulario">
+        <a href="{% url 'ver_perfil' %}" class="btn-volver">← Volver al perfil</a>
+        <h1>Editar Mi Perfil</h1>
+        <p>Actualiza tu nombre, correo electrónico o foto de perfil.</p>
+    </div>
+
+    <div class="tarjeta-formulario-container">
+        <form method="POST" enctype="multipart/form-data" class="form-crear-perfil">
+            {% csrf_token %}          
+            <div class="grupo-campo">
+                <label for="{{ form.foto.id_for_label }}">Foto de Perfil</label>
+                
+                {% if perfil.foto %}
+                    <div class="preview-box-senna">
+                        <span>Foto actual:</span>
+                        <img src="{{ perfil.foto.url }}" alt="{{ perfil.nombre }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                    </div>
+                {% endif %}
+
+                {{ form.foto }}
+                {% if form.foto.errors %}
+                    <span class="error-texto">{{ form.foto.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.nombre.id_for_label }}">Nombre de Usuario</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                    <span class="error-texto">{{ form.nombre.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label>Correo Electrónico</label>
+                <input type="email" value="{{ perfil.email }}" disabled style="background-color: #f1f5f9; color: #64748b; cursor: not-allowed;">
+                <small style="color: #94a3b8; font-size: 11px;">El correo electrónico está vinculado a tu cuenta y no se puede modificar.</small>
+            </div>
+
+            <div class="acciones-formulario">
+                <a href="{% url 'ver_perfil' %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-guardar">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+{% endblock %}

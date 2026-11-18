@@ -5,34 +5,34 @@
 
 {% block content %}
 <div class="learn-route-wrapper">
-  <div class="dict-container">
+<div class="dict-container">
 
     <!-- Cabecera y Resumen de Progreso -->
     <header class="route-header ranking-page-header">
-      <div>
+        <div>
         <h1 class="route-title">🏅 Vitrina de Logros</h1>
         <p class="route-subtitle">Desbloquea medallas completando lecciones, manteniendo tu racha y dominando señas.</p>
-      </div>
+        </div>
 
-      <div class="sidebar-widget logros-summary-box">
+        <div class="sidebar-widget logros-summary-box">
         <div class="widget-header" style="margin-bottom: 0.4rem;">
-          <span class="widget-title" style="font-size: 0.9rem;">Progreso total</span>
-          <span class="widget-goal-count">{{ total_obtenidos }} / {{ total_general }}</span>
+            <span class="widget-title" style="font-size: 0.9rem;">Progreso total</span>
+            <span class="widget-goal-count">{{ total_obtenidos }} / {{ total_general }}</span>
         </div>
         <div class="progress-bar-track" style="width: 210px;">
-          <div class="progress-bar-fill" style="--p: {{ porcentaje_logros }}%; width: var(--p);"></div>
+            <div class="progress-bar-fill" style="--p: {{ porcentaje_logros }}%; width: var(--p);"></div>
         </div>
-      </div>
+        </div>
     </header>
 
     <!-- Filtros por Tipo de Logro -->
     <nav class="dict-categories-bar" aria-label="Filtrar logros por tipo">
-        <a href="{% url 'logros' %}" class="cat-pill {% if not categoria_actual %}active{% endif %}">
+        <a href="{% url 'mis_logros' %}" class="cat-pill {% if not categoria_actual %}active{% endif %}">
             Todos
         </a>
 
         {% for codigo, nombre in tipos_choices %}
-            <a href="{% url 'logros' %}?tipo={{ codigo }}" 
+            <a href="{% url 'mis_logros' %}?tipo={{ codigo }}" 
             class="cat-pill {% if categoria_actual == codigo %}active{% endif %}">
             {% if codigo == "LEC" %}📚
             {% elif codigo == "RAC" %}🔥
@@ -47,61 +47,61 @@
 
     <!-- Cuadrícula de Logros -->
     <section class="achievements-grid">
-      {% for logro in logros %}
+        {% for logro in logros %}
         {% if logro.id in obtenidos_ids %}
-          <!-- Logro Desbloqueado -->
-          <article class="achievement-card unlocked">
+            <!-- Logro Desbloqueado -->
+            <article class="achievement-card unlocked">
             <div class="achievement-icon unlocked">
-              {% if logro.tipo == "LEC" %}📚
-              {% elif logro.tipo == "RAC" %}🔥
-              {% elif logro.tipo == "SEN" %}🤟
-              {% elif logro.tipo == "NIV" %}⭐
-              {% elif logro.tipo == "DIF" %}🎯
-              {% elif logro.tipo == "EXP" %}🧭
-              {% else %}🏆{% endif %}
+                {% if logro.tipo == "LEC" %}📚
+                {% elif logro.tipo == "RAC" %}🔥
+                {% elif logro.tipo == "SEN" %}🤟
+                {% elif logro.tipo == "NIV" %}⭐
+                {% elif logro.tipo == "DIF" %}🎯
+                {% elif logro.tipo == "EXP" %}🧭
+                {% else %}🏆{% endif %}
             </div>
 
             <div class="achievement-info">
-              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
                 <h3 class="achievement-title" style="margin-bottom: 0;">{{ logro.nombre }}</h3>
                 {% if logro.tipo %}
-                  <span class="dict-cat-tag" style="position: static;">{{ logro.tipo }}</span>
+                    <span class="dict-cat-tag" style="position: static;">{{ logro.tipo }}</span>
                 {% endif %}
-              </div>
-              <p class="achievement-desc">{{ logro.descripcion }}</p>
+                </div>
+                <p class="achievement-desc">{{ logro.descripcion }}</p>
             </div>
 
             <span class="badge-completed">✓ Obtenido</span>
-          </article>
+            </article>
         {% else %}
-          <!-- Logro Bloqueado -->
-          <article class="achievement-card locked">
+            <!-- Logro Bloqueado -->
+            <article class="achievement-card locked">
             <div class="achievement-icon locked">🔒</div>
 
             <div class="achievement-info">
-              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
                 <h3 class="achievement-title" style="margin-bottom: 0;">{{ logro.nombre }}</h3>
                 {% if logro.tipo %}
-                  <span class="cat-pill" style="padding: 0.1rem 0.5rem; font-size: 0.7rem;">{{ logro.tipo }}</span>
+                    <span class="cat-pill" style="padding: 0.1rem 0.5rem; font-size: 0.7rem;">{{ logro.tipo }}</span>
                 {% endif %}
-              </div>
-              <p class="achievement-desc">{{ logro.descripcion }}</p>
-              {% if logro.puntos_xp %}
+                </div>
+                <p class="achievement-desc">{{ logro.descripcion }}</p>
+                {% if logro.puntos_xp %}
                 <small style="color: var(--text_secundario); font-weight: 600;">Meta: {{ logro.puntos_xp }} XP</small>
-              {% endif %}
+                {% endif %}
             </div>
-          </article>
+            </article>
         {% endif %}
-      {% empty %}
+        {% empty %}
         <div class="sidebar-widget dict-empty-state">
-          <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🏅</span>
-          <h3 class="route-module-title">No hay logros en esta categoría</h3>
-          <p class="route-module-desc">Aún no se han registrado logros de este tipo.</p>
-          <a href="{% url 'logros' %}" class="btn-route-study" style="margin-top: 1rem;">Ver todos los logros</a>
+            <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🏅</span>
+            <h3 class="route-module-title">No hay logros en esta categoría</h3>
+            <p class="route-module-desc">Aún no se han registrado logros de este tipo.</p>
+            <a href="{% url 'mis_logros' %}" class="btn-route-study" style="margin-top: 1rem;">Ver todos los logros</a>
         </div>
-      {% endfor %}
+        {% endfor %}
     </section>
 
-  </div>
+    </div>
 </div>
 {% endblock %}

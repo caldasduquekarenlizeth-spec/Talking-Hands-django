@@ -1,0 +1,66 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Gestionar Módulos - Talking Hands{% endblock %}
+
+{% block content %}
+<main class="contenedor-gestion">
+
+    <!-- Encabezado de Sección con Buscador y Botón Añadir -->
+    <div class="encabezado-modulos">
+        <div>
+            <h1>Gestionar módulos</h1>
+            <p class="subtitulo-admin">Bienvenido administrador</p>
+        </div>
+
+        <div class="top-bar-acciones">
+            <!-- Buscador por backend -->
+            <form method="GET" action="{% url 'listar_modulos' %}" class="buscador-box">
+                <span class="icono-lupa">🔍</span>
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query|default:'' }}" 
+                    placeholder="Buscar módulo..." 
+                    class="input-buscar"
+                    autocomplete="off"
+                />
+            </form>
+
+            <!-- Botón Añadir Módulo -->
+            <a href="{% url 'crear_modulo' %}" class="btn-anadir" style="text-decoration: none;">Añadir Módulo</a>
+        </div>
+    </div>
+
+    <!-- Lista de Tarjetas de Módulos -->
+    <div class="lista-modulos-container">
+        {% for modulo in modulos %}
+            <div class="tarjeta-modulo">
+                <div class="numero-modulo">
+                    {{ forloop.counter }}
+                </div>
+            
+                <!-- Clic en el título o descripción lleva a gestionar sus lecciones -->
+                <div class="info-modulo">
+                    <h2>
+                        <a href="{% url 'ver_lecciones' modulo.id %}" style="text-decoration: none; color: inherit;">
+                            Módulo {{ forloop.counter }}: {{ modulo.nombre }}
+                        </a>
+                    </h2>
+                    <p>{{ modulo.descripcion }}</p>
+                </div>
+            
+                <div class="acciones-modulo">
+                    <a href="{% url 'editar_modulo' modulo.id %}" class="btn-editar-modulo">✏️ Editar</a>
+                    <a href="{% url 'eliminar_modulo' modulo.id %}" class="btn-eliminar-modulo">🗑️ Eliminar</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="tarjeta-modulo" style="justify-content: center; color: #94a3b8; padding: 40px;">
+                <p>No se encontraron módulos registrados.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+</main>
+{% endblock %}
