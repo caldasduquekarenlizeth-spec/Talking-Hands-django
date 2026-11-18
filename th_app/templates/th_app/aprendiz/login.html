@@ -1,0 +1,65 @@
+{% extends "th_app/base.html" %}
+
+{% block title %}Iniciar Sesión | Talking Hands{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+<div class="auth-card">
+    <div class="auth-header">
+        <div class="auth-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <line x1="19" y1="8" x2="19" y2="14"></line>
+                <line x1="22" y1="11" x2="16" y2="11"></line>
+            </svg>
+        </div>
+        <h2 class="auth-title">Iniciar Sesión</h2>
+    </div>
+
+    {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="POST" class="auth-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_username">Usuario:</label>
+            <input 
+            type="text" 
+            name="username" 
+            id="id_username" 
+            required 
+            class="form-input"
+        >
+        </div>
+
+        <div class="form-group">
+            <label for="id_password">Contraseña:</label>
+            <input
+                type="password" 
+                id="id_password" 
+                name="password"
+                required 
+                class="form-input"
+            >
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+    </form>
+
+    <div class="auth-footer">
+        <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+            ¿No tienes cuenta? <a href="{% url 'registro' %}" style="color: var(--primary); font-weight: bold;">Regístrate aquí</a>
+        </p>
+    </div>
+</div>
+</section>
+{% endblock %}

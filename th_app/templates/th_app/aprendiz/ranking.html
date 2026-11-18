@@ -1,0 +1,58 @@
+{% extends "th_app/base.html" %}
+
+{% block title %}Ranking | Talking Hands{% endblock %}
+
+{% block content %}
+<div class="learn-route-wrapper">
+  <div class="ranking-page-container">
+
+    <!-- Encabezado de la sección -->
+    <header class="route-header ranking-page-header">
+      <div>
+        <h1 class="route-title">🏆 Tabla de Clasificación</h1>
+        <p class="route-subtitle">Compite con otros aprendices de LSC y sube de nivel acumulando XP.</p>
+      </div>
+      <span class="badge-completed">Liga Bronce</span>
+    </header>
+
+    <!-- Tarjeta principal del Ranking -->
+    <section class="sidebar-widget ranking-card-box">
+      <div class="ranking-table-head">
+        <span>Posición y Aprendiz</span>
+        <span>Experiencia</span>
+      </div>
+
+      <ul class="ranking-list">
+        {% for item in ranking %}
+          <li class="ranking-item ranking-row {% if item.usuario == request.user %}is-me{% endif %} {% if forloop.counter <= 3 %}podium-row podium-{{ forloop.counter }}{% endif %}">
+            
+            <span class="rank-pos {% if forloop.counter <= 3 %}top-{{ forloop.counter }}{% endif %}">
+              {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}#{{ forloop.counter }}{% endif %}
+            </span>
+            
+            <div class="rank-user-avatar">
+              {{ item.usuario.username|slice:":1"|upper }}
+            </div>
+
+            <div class="rank-user-meta">
+              <span class="rank-name {% if item.usuario == request.user %}is-me-text{% endif %}">
+                {{ item.usuario.username }}
+                {% if item.usuario == request.user %}
+                  <span class="you-pill">Tú</span>
+                {% endif %}
+              </span>
+            </div>
+
+            <span class="rank-xp-badge">⚡ {{ item.puntos_xp }} XP</span>
+          </li>
+        {% empty %}
+          <li class="widget-hint" style="text-align: center; padding: 2.5rem 1rem;">
+            Aún no hay aprendices registrados en el ranking.
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+  </div>
+</div>
+{% endblock %}

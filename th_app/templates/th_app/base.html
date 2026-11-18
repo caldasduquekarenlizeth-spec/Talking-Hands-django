@@ -4,127 +4,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Aprendizaje de Señas{% endblock %}</title>
+    <title>{% block title %}Talking Hands{% endblock %}</title>
     <meta name="description" content="Plataforma interactiva para aprender lengua de señas.">
-    
-    <!-- Enlace al archivo CSS externo -->
-    <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
-    
+
+    {# Detecta si estamos en una vista del panel de administración o en vistas públicas/aprendiz #}
+    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
+        <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+    {% else %}
+        <link rel="stylesheet" href="{% static 'th_app/css/styles.css' %}">
+    {% endif %}
+
     {% block extra_head %}{% endblock %}
 </head>
-<body class="layout-body">
 
-    <!-- Navbar Superior Global -->
-    <header class="header-navbar">
-        <div class="marca">
-            <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
-            <span>Talking Hands</span>
-        </div>
+{% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
+    {# ===================================================================== #}
+    {# DISEÑO 1: PANEL DE ADMINISTRACIÓN (RAMA KAREN)                        #}
+    {# ===================================================================== #}
+    <body class="layout-body">
+        <header class="header-navbar">
+            <div class="marca">
+                <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
+                <span>Talking Hands</span>
+            </div>
 
-        <nav class="nav-links">
-            <!-- Inicio: Activo solo si la ruta actual es 'dashboard' -->
-            <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                Inicio
-            </a>
-        
-            <!-- Gestión (Desplegable): Activo si estamos en cualquier vista administrativa -->
-            <div class="dropdown-container">
-                <a href="{% url 'listar_perfiles' %}" class="nav-item dropdown-trigger {% if request.resolver_match.url_name in 'listar_perfiles crear_perfil eliminar_perfil listar_modulos' %}active{% endif %}">
-                    Gestión <span class="flecha-dropdown">▼</span>
+            <nav class="nav-links">
+                <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name in 'dashboard panel_admin' %}active{% endif %}">
+                    Inicio
                 </a>
-                <div class="dropdown-menu">
-                    <a href="{% url 'listar_perfiles' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_perfiles' %}active{% endif %}">
-                        👤 Usuarios
+
+                <div class="dropdown-container">
+                    <a href="{% url 'listar_perfiles' %}" class="nav-item dropdown-trigger {% if request.resolver_match.url_name in 'listar_perfiles crear_perfil eliminar_perfil listar_modulos' %}active{% endif %}">
+                        Gestión <span class="flecha-dropdown">▼</span>
                     </a>
-                    <a href="{% url 'listar_modulos' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_modulos' %}active{% endif %}">
-                        📚 Módulos
-                    </a>
-                    <a href="{% url 'listar_sennas' %}" class="dropdown-item">🤟 Señas</a>
-                    <a href="{% url 'listar_logros' %}" class="dropdown-item">🏆 Logros</a>
+                    <div class="dropdown-menu">
+                        <a href="{% url 'listar_perfiles' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_perfiles' %}active{% endif %}">
+                            👤 Usuarios
+                        </a>
+                        <a href="{% url 'listar_modulos' %}" class="dropdown-item {% if request.resolver_match.url_name == 'listar_modulos' %}active{% endif %}">
+                            📚 Módulos
+                        </a>
+                        <a href="{% url 'listar_sennas' %}" class="dropdown-item">🤟 Señas</a>
+                        <a href="{% url 'listar_logros' %}" class="dropdown-item">🏆 Logros</a>
+                    </div>
                 </div>
-            </div>
-        
-            <a href="{% url 'ver_perfil' %}" class="nav-item">Perfil</a>
-            <a href="{% url 'ver_ranking' %}" class="nav-item">Ranking</a>
-        </nav>
 
-       <div class="nav-acciones-derecha">
-           
-           <!-- Campanita: Desplegable de actividad reciente -->
-           <div class="nav-notif-wrapper">
-               <button type="button" class="btn-campana-nav" title="Actividad reciente">
-                   🔔
-                   {% if ultimas_actividades_nav %}
-                       <span class="punto-notif-nav"></span>
-                   {% endif %}
-               </button>
-       
-               <div class="dropdown-notif-nav">
-                   <div class="dropdown-notif-header">Actividad reciente</div>
-                   {% for act in ultimas_actividades_nav %}
-                       <div class="dropdown-notif-item">
-                           <p>{{ act.detalle }}</p>
-                           <span>Hace {{ act.fecha|timesince }}</span>
-                       </div>
-                   {% empty %}
-                       <div class="dropdown-notif-vacio">Sin actividad reciente</div>
-                   {% endfor %}
-                   <a href="{% url 'ver_perfil' %}" class="dropdown-notif-footer">Ver historial completo →</a>
-               </div>
-           </div>
-       
-           <!-- Avatar idéntico al de Perfil con enlace directo a ver_perfil -->
-            <a href="{% url 'ver_perfil' %}" class="avatar-nav-perfil" title="Ir a mi perfil">
-                {% if perfil_nav.foto %}
-                    <img src="{{ perfil_nav.foto.url }}" alt="{{ perfil_nav.nombre }}" class="img-avatar-circular">
-                {% else %}
-                    {{ perfil_nav.nombre|default:"AD"|slice:":2"|upper }}
-                {% endif %}
-            </a>
-       
-       </div>
-    </header>
+                <a href="{% url 'ver_perfil' %}" class="nav-item">Perfil</a>
+                <a href="{% url 'ver_ranking' %}" class="nav-item">Ranking</a>
+            </nav>
 
-    <!-- Contenido Principal Dinámico -->
-    <div class="contenido-principal-layout">
-        {% block content %}
-        {% endblock %}
-    </div>
+            <div class="nav-acciones-derecha">
+                <div class="nav-notif-wrapper">
+                    <button type="button" class="btn-campana-nav" title="Actividad reciente">
+                        🔔
+                        {% if ultimas_actividades_nav %}
+                            <span class="punto-notif-nav"></span>
+                        {% endif %}
+                    </button>
 
-    <!-- Footer Global (Para todas las páginas) -->
-    <footer class="footer-landing">
-        <div class="contenedor-footer">
-            <div class="columna-footer-marca">
-                <div class="marca-footer">
-                    <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo-footer" />
-                    <span>Talking <strong>Hands</strong></span>
+                    <div class="dropdown-notif-nav">
+                        <div class="dropdown-notif-header">Actividad reciente</div>
+                        {% for act in ultimas_actividades_nav %}
+                            <div class="dropdown-notif-item">
+                                <p>{{ act.detalle }}</p>
+                                <span>Hace {{ act.fecha|timesince }}</span>
+                            </div>
+                        {% empty %}
+                            <div class="dropdown-notif-vacio">Sin actividad reciente</div>
+                        {% endfor %}
+                        <a href="{% url 'ver_perfil' %}" class="dropdown-notif-footer">Ver historial completo →</a>
+                    </div>
                 </div>
-                <p>
-                    Facilitando el acceso a la Lengua de Señas Colombiana a través de la educación lúdica, accesible y gratuita.
-                </p>
-            </div>
 
-            <div class="columna-footer-links">
-                <h3>Mapa del sitio</h3>
-                <ul>
-                    <li><a href="#">Lecciones</a></li>
-                    <li><a href="#">Comunidad</a></li>
-                    <li><a href="#">Logros</a></li>
-                </ul>
+                <a href="{% url 'ver_perfil' %}" class="avatar-nav-perfil" title="Ir a mi perfil">
+                    {% if perfil_nav.foto %}
+                        <img src="{{ perfil_nav.foto.url }}" alt="{{ perfil_nav.nombre }}" class="img-avatar-circular">
+                    {% else %}
+                        {{ perfil_nav.nombre|default:"AD"|slice:":2"|upper }}
+                    {% endif %}
+                </a>
             </div>
+        </header>
 
-            <div class="columna-footer-links">
-                <h3>Contacto</h3>
-                <ul>
-                    <li><a href="#">Soporte</a></li>
-                </ul>
-            </div>
+        <div class="contenido-principal-layout">
+            {% block content %}{% endblock %}
         </div>
 
-        <div class="copyright-bar">
-            <p>© 2026 Talking Hands. Creado con amor para la comunidad sorda y oyente de Colombia.</p>
-        </div>
-    </footer>
+        <footer class="footer-landing">
+            <div class="contenedor-footer">
+                <div class="columna-footer-marca">
+                    <div class="marca-footer">
+                        <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo-footer" />
+                        <span>Talking <strong>Hands</strong></span>
+                    </div>
+                    <p>
+                        Facilitando el acceso a la Lengua de Señas Colombiana a través de la educación lúdica, accesible y gratuita.
+                    </p>
+                </div>
 
-</body>
-</html>
+                <div class="columna-footer-links">
+                    <h3>Mapa del sitio</h3>
+                    <ul>
+                        <li><a href="{% url 'listar_modulos' %}">Módulos</a></li>
+                        <li><a href="{% url 'listar_sennas' %}">Señas</a></li>
+                        <li><a href="{% url 'listar_logros' %}">Logros</a></li>
+                    </ul>
+                </div>
+
+                <div class="columna-footer-links">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li><a href="#">Soporte</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="copyright-bar">
+                <p>© 2026 Talking Hands. Creado con amor para la comunidad sorda y oyente de Colombia.</p>
+            </div>
+        </footer>
+    </body>
+
+{% else %}
+    {# ===================================================================== #}
+    {# DISEÑO 2: PORTAL PÚBLICO Y APRENDIZ (RAMA GABRIEL)                    #}
+    {# ===================================================================== #}
+    <body>
+        <header class="main-header">

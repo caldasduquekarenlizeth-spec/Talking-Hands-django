@@ -1,0 +1,77 @@
+{% extends "th_app/base.html" %}
+
+{% block title %}Resultados: {{ leccion.nombre }} | Talking Hands{% endblock %}
+
+{% block content %}
+<div class="quiz-wrapper">
+  <div class="quiz-main-card result-card">
+
+    <!-- Cabecera según si aprobó o no la lección -->
+    <div class="result-header">
+      {% if aprobado %}
+        <div class="result-badge-icon success">🏆</div>
+        <h1 class="quiz-question-title" style="margin-bottom: 0.5rem;">¡Lección Completada!</h1>
+        <p class="route-subtitle">Has dominado los ejercicios de <strong>{{ leccion.nombre }}</strong>.</p>
+      {% else %}
+        <div class="result-badge-icon error">💪</div>
+        <h1 class="quiz-question-title" style="margin-bottom: 0.5rem; color: #991b1b;">¡Sigue practicando!</h1>
+        <p class="route-subtitle">Necesitas acertar todas las señas para aprobar <strong>{{ leccion.nombre }}</strong>.</p>
+      {% endif %}
+    </div>
+
+    <!-- Tarjetas de resumen (Aciertos, XP Ganado, XP Total) -->
+    <div class="result-stats-grid">
+      <div class="result-stat-box">
+        <span class="stat-box-label">Aciertos</span>
+        <span class="stat-box-value">{{ aciertos }} / {{ total }}</span>
+      </div>
+
+      <div class="result-stat-box highlight-xp">
+        <span class="stat-box-label">XP Ganados</span>
+        <span class="stat-box-value">+{{ xp_ganado }} XP</span>
+      </div>
+
+      <div class="result-stat-box">
+        <span class="stat-box-label">Tu XP Total</span>
+        <span class="stat-box-value">⚡ {{ perfil.puntos_xp }}</span>
+      </div>
+    </div>
+
+    <!-- Desglose ejercicio por ejercicio -->
+    <div class="result-breakdown">
+      <h3 class="result-section-title">Resumen de tus respuestas</h3>
+      
+      <div class="result-list">
+        {% for item in resultados %}
+          <div class="feedback-banner {% if item.es_correcta %}success{% else %}error{% endif %}" style="margin-top: 0; justify-content: space-between;">
+            <div class="feedback-content">
+              <span class="feedback-icon">{% if item.es_correcta %}✅{% else %}❌{% endif %}</span>
+              <div class="feedback-texts">
+                <h4 class="feedback-title">{{ item.pregunta }}</h4>
+                <p class="feedback-subtitle">
+                  Seña correcta: <strong>{{ item.opcion_correcta.nombre }}</strong>
+                </p>
+              </div>
+            </div>
+
+            {% if item.opcion_correcta and item.opcion_correcta.imagen %}
+              <img src="{{ item.opcion_correcta.imagen.url }}" alt="{{ item.opcion_correcta.nombre }}" class="result-mini-sign">
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <footer class="quiz-footer-actions">
+      <a href="{% url 'realizar_leccion' leccion.id %}" class="btn btn-outline">
+        ↻ Volver a intentar
+      </a>
+      <a href="{% url 'dashboard_aprendiz' %}" class="btn btn-primary btn-lg">
+        Continuar a la Ruta →
+      </a>
+    </footer>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'th_app/base.html' %}
+{% load static %}
+
+{% block title %}Registro Aprendiz | Talking Hands{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <line x1="19" y1="8" x2="19" y2="14"></line>
+          <line x1="22" y1="11" x2="16" y2="11"></line>
+        </svg>
+      </div>
+      <h2 class="auth-title">Crear cuenta de Aprendiz</h2>
+      <p class="auth-subtitle">Aprende Lengua de Señas Colombiana a tu propio ritmo</p>
+    </div>
+
+    <!-- Mensajes de Django (ej. "Ese nombre de usuario ya está en uso") -->
+    {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Formulario POST con CSRF Token -->
+    <form method="POST" action="" class="auth-form" novalidate>
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="id_username">Nombre de usuario</label>
+        <input 
+          type="text" 
+          name="username" 
+          id="id_username" 
+          class="form-input" 
+          placeholder="Ej. carlos_m" 
+          required 
+          autocomplete="username"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="id_email">Correo electrónico</label>
+        <input 
+          type="email" 
+          name="email" 
+          id="id_email" 
+          class="form-input" 
+          placeholder="nombre@ejemplo.com" 
+          required 
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="id_password">Contraseña</label>
+        <input 
+          type="password" 
+          name="password" 
+          id="id_password" 
+          class="form-input" 
+          placeholder="••••••••" 
+          required 
+          autocomplete="new-password"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Registrarme</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>¿Ya tienes una cuenta? <a href="#login" class="auth-link">Inicia sesión</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}

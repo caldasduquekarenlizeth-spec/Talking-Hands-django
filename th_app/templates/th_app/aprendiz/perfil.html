@@ -1,0 +1,118 @@
+{% extends 'th_app/base.html' %}
+
+{% block title %}Mi Perfil y Ranking | Talking Hands{% endblock %}
+
+{% block content %}
+<div class="learn-route-wrapper">
+  <div class="learn-route-container">
+    
+    <!-- Columna Izquierda: Tarjeta de Perfil y Vitrina de Logros -->
+    <main class="learn-main-content">
+      
+      <!-- Cabecera del Perfil -->
+      <section class="sidebar-widget profile-hero-card">
+        <div class="profile-avatar-large">
+          {{ perfil.usuario.username|slice:":1"|upper }}
+        </div>
+        
+        <div class="profile-hero-info">
+          <div class="profile-name-row">
+            <h1 class="route-title" style="margin-bottom: 0; font-size: 1.8rem;">
+              {{ perfil.usuario.username }}
+            </h1>
+            <span class="badge-completed">Aprendiz LSC</span>
+          </div>
+          <p class="route-subtitle" style="margin-top: 0.25rem;">
+            {{ perfil.usuario.email|default:"Sin correo registrado" }} · Miembro desde {{ perfil.usuario.date_joined|date:"M Y" }}
+          </p>
+
+          <!-- Estadísticas rápidas del usuario -->
+          <div class="profile-mini-stats">
+            <div class="mini-stat-pill">
+              <span>⚡</span> <strong>{{ perfil.puntos_xp }}</strong> XP Totales
+            </div>
+            <div class="mini-stat-pill">
+              <span>📚</span> <strong>{{ perfil.lecciones_completadas.count }}</strong> Lecciones
+            </div>
+            <div class="mini-stat-pill">
+              <span>🏆</span> <strong>{{ logros_desbloqueados_ids|length }}</strong> / {{ todos_los_logros|length }} Logros
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección de Logros -->
+      <section style="margin-top: 2rem;">
+        <div class="widget-header">
+          <h2 class="route-module-title" style="font-size: 1.35rem;">Mis Logros</h2>
+          <span class="progress-bar-label">
+            {{ logros_desbloqueados_ids|length }} desbloqueados
+          </span>
+        </div>
+
+        <div class="achievements-grid">
+          {% for logro in todos_los_logros %}
+            {% if logro.id in logros_desbloqueados_ids %}
+              <!-- Logro Desbloqueado -->
+              <article class="achievement-card unlocked">
+                <div class="achievement-icon unlocked">🏅</div>
+                <div class="achievement-info">
+                  <h4 class="achievement-title">{{ logro.nombre }}</h4>
+                  <p class="achievement-desc">{{ logro.descripcion }}</p>
+                </div>
+                <span class="badge-completed">Obtenido</span>
+              </article>
+            {% else %}
+              <!-- Logro Bloqueado -->
+              <article class="achievement-card locked">
+                <div class="achievement-icon locked">🔒</div>
+                <div class="achievement-info">
+                  <h4 class="achievement-title">{{ logro.nombre }}</h4>
+                  <p class="achievement-desc">{{ logro.descripcion }}</p>
+                </div>
+              </article>
+            {% endif %}
+          {% empty %}
+            <p class="empty-state">Aún no hay logros configurados en la plataforma.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Columna Derecha: Top 10 Ranking Global -->
+    <aside class="learn-sidebar" style="margin-top: 0;">
+      <section class="sidebar-widget">
+        <div class="widget-header">
+          <h3 class="widget-title" style="font-size: 1.1rem;">🏆 Top 10 Aprendices</h3>
+          <span class="widget-goal-count">Liga LSC</span>
+        </div>
+
+        <ul class="ranking-list">
+          {% for item in ranking %}
+            <li class="ranking-item ranking-row {% if item.usuario == request.user %}is-me{% endif %}">
+              <span class="rank-pos {% if forloop.counter <= 3 %}top-{{ forloop.counter }}{% endif %}">
+                {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}{{ forloop.counter }}{% endif %}
+              </span>
+              
+              <div class="rank-user-avatar">
+                {{ item.usuario.username|slice:":1"|upper }}
+              </div>
+
+              <span class="rank-name" style="font-weight: {% if item.usuario == request.user %}700{% else %}500{% endif %}; color: #1e293b;">
+                {{ item.usuario.username }}
+                {% if item.usuario == request.user %}<small style="color: var(--verde_oscuro);">(Tú)</small>{% endif %}
+              </span>
+
+              <span class="rank-xp">{{ item.puntos_xp }} XP</span>
+            </li>
+          {% empty %}
+            <li class="widget-hint">Aún no hay aprendices en el ranking.</li>
+          {% endfor %}
+        </ul>
+      </section>
+    </aside>
+
+  </div>
+</div>
+{% endblock %}
