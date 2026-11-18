@@ -79,6 +79,12 @@ class Logro(models.Model):
     def __str__(self):
         return f"{self.nombre}: {self.tipo}"
 
+
+class RolUsuario(models.TextChoices):
+    APRENDIZ = 'APRENDIZ', 'Aprendiz'
+    ADMINISTRADOR = 'ADMIN', 'Administrador'
+
+
 class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name="perfil", null=True, blank=True)
     email = models.EmailField()
@@ -88,3 +94,37 @@ class Perfil(models.Model):
 
     def __str__(self):
         return f"{self.usuario} - {self.puntos_xp}XP"
+
+
+class ActividadAdmin(models.Model):
+    ACCIONES = [
+        ('CREAR', 'Crear'),
+        ('EDITAR', 'Editar'),
+        ('ELIMINAR', 'Eliminar'),
+    ]
+
+    ENTIDADES = [
+        ('Módulo', 'Módulo'),
+        ('Lección', 'Lección'),
+        ('Ejercicio', 'Ejercicio'),
+        ('Seña', 'Seña'),
+        ('Logro', 'Logro'),
+    ]
+
+    perfil = models.ForeignKey(
+        Perfil,
+        on_delete=models.CASCADE,
+        related_name='actividades',
+        null=True,
+        blank=True
+    )
+    accion = models.CharField(max_length=10, choices=ACCIONES)
+    entidad = models.CharField(max_length=20, choices=ENTIDADES)
+    detalle = models.CharField(max_length=150)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha']
+
+    def __str__(self):
+        return f"{self.detalle} ({self.entidad})"

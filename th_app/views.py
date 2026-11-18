@@ -1,11 +1,26 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.db.models import Q
-from .models import Modulo, Leccion, Ejercicio, Senna, Logro, Perfil, TipoLogro
+import csv
 import random
+from django.db import models
+from django.db.models import Sum, Q
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+
+from .models import Modulo, Leccion, Ejercicio, Senna, Logro, Perfil, TipoLogro, ActividadAdmin
+from .forms import (
+    formsPerfiles,
+    formsModulos,
+    formsLecciones,
+    formsEjercicios,
+    formsSennas,
+    formsLogros,
+    formsEditarPerfilPropio,
+)
+
 
 # Create your views here.
 # Vista del Index.html
@@ -31,7 +46,8 @@ def registro_aprendiz(request):
         Perfil.objects.create(
             usuario = user,
             email = email,
-            puntos_xp = 0
+            puntos_xp = 0,
+            
         )
 
         login(request, user)
@@ -310,3 +326,21 @@ def perfil_y_ranking(request):
         "ranking": ranking,
     }
     return render(request, "th_app/aprendiz/perfil.html", context)
+
+# ================================================================= ADMIN ==================================
+
+# ==========================================
+# UTILIDADES Y AUDITORÍA
+# ==========================================
+
+def registrar_actividad(accion, entidad, detalle, perfil=None):
+    if perfil is None:
+        perfil = Perfil.objects.filter(rol='ADMIN').first() or Perfil.objects.first()
+
+    ActividadAdmin.objects.create(
+        perfil=perfil,
+        accion=accion,
+        entidad=entidad,
+        detalle=detalle
+    )
+
