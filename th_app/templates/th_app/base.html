@@ -7,7 +7,7 @@
     <title>{% block title %}Talking Hands{% endblock %}</title>
     <meta name="description" content="Plataforma interactiva para aprender lengua de señas.">
 
-    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
+    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema clasificacion_admin' %}
         <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
     {% else %}
         <link rel="stylesheet" href="{% static 'th_app/css/styles.css' %}">
@@ -16,9 +16,9 @@
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="{% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}layout-body{% endif %}">
+<body class="{% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema clasificacion_admin' %}layout-body{% endif %}">
 
-    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
+    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema clasificacion_admin' %}
         <!-- NAVBAR ADMIN -->
         <header class="header-navbar">
             <div class="marca">
@@ -42,7 +42,7 @@
                 </div>
 
                 <a href="{% url 'ver_perfil' %}" class="nav-item">Perfil</a>
-                <a href="{% url 'ver_ranking' %}" class="nav-item">Ranking</a>
+                <a href="{% url 'clasificacion_admin' %}" class="nav-item">Ranking</a>
             </nav>
 
             <div class="nav-acciones-derecha">
@@ -74,6 +74,13 @@
                         {{ perfil_nav.nombre|default:"AD"|slice:":2"|upper }}
                     {% endif %}
                 </a>
+
+                <form action="{% url 'logout' %}" method="POST" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" title="Cerrar sesión" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 6px 12px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        Salir
+                    </button>
+                </form>
             </div>
         </header>
 
@@ -133,7 +140,7 @@
         <!-- ÚNICO BLOQUE DE CONTENIDO -->
         {% block content %}{% endblock %}
 
-    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema ver_ranking' %}
+    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema clasificacion_admin' %}
         </div>
         <footer class="footer-landing">
             <div class="contenedor-footer">

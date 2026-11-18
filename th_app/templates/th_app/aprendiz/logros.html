@@ -27,12 +27,12 @@
 
     <!-- Filtros por Tipo de Logro -->
     <nav class="dict-categories-bar" aria-label="Filtrar logros por tipo">
-        <a href="{% url 'logros' %}" class="cat-pill {% if not categoria_actual %}active{% endif %}">
+        <a href="{% url 'mis_logros' %}" class="cat-pill {% if not categoria_actual %}active{% endif %}">
             Todos
         </a>
 
         {% for codigo, nombre in tipos_choices %}
-            <a href="{% url 'logros' %}?tipo={{ codigo }}" 
+            <a href="{% url 'mis_logros' %}?tipo={{ codigo }}" 
             class="cat-pill {% if categoria_actual == codigo %}active{% endif %}">
             {% if codigo == "LEC" %}📚
             {% elif codigo == "RAC" %}🔥
@@ -97,7 +97,7 @@
           <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🏅</span>
           <h3 class="route-module-title">No hay logros en esta categoría</h3>
           <p class="route-module-desc">Aún no se han registrado logros de este tipo.</p>
-          <a href="{% url 'logros' %}" class="btn-route-study" style="margin-top: 1rem;">Ver todos los logros</a>
+          <a href="{% url 'mis_logros' %}" class="btn-route-study" style="margin-top: 1rem;">Ver todos los logros</a>
         </div>
       {% endfor %}
     </section>

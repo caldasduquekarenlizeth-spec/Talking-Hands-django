@@ -71,7 +71,7 @@ urlpatterns = [
     path('perfil/cambiar-contrasena/', views.cambiar_contrasena, name='cambiar_contrasena'),
     path('perfil/auditoria/', views.gestion_auditoria, name='gestion_auditoria'),
     path('perfil/estado-sistema/', views.config_sistema, name='config_sistema'),
-    path('ranking/', views.ver_ranking, name='ver_ranking'),
+    path('panel-admin/clasificacion/', views.ver_ranking, name='clasificacion_admin'),
 ]
 
 if settings.DEBUG:

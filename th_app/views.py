@@ -5,9 +5,9 @@ from django.db.models import Sum, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, update_session_auth_hash
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
 
 from .models import Perfil, Modulo, Leccion, Ejercicio, Senna, Logro, ActividadAdmin, TipoLogro
@@ -165,11 +165,27 @@ def editar_perfil(request, perfil_id):
 @solo_admin
 def eliminar_perfil(request, perfil_id):
     perfil = get_object_or_404(Perfil, id=perfil_id)
+
+    # Evita que el administrador elimine su propia cuenta activa por accidente
+    if perfil.usuario == request.user:
+        messages.error(request, 'No puedes eliminar tu propio perfil de administrador mientras tienes sesión iniciada.')
+        return redirect('listar_perfiles')
+
     if request.method == 'POST':
         nombre_perfil = perfil.nombre
-        perfil.delete()
+        usuario = perfil.usuario
+
+        # 1. Borramos sus actividades vinculadas para evitar bloqueos de llave foránea
+        ActividadAdmin.objects.filter(perfil=perfil).delete()
+
+        # 2. Eliminamos el User (que borra en cascada el Perfil) o solo el Perfil si no tiene User
+        if usuario:
+            usuario.delete()
+        else:
+            perfil.delete()
+
         registrar_actividad('ELIMINAR', 'Perfil', f'Eliminaste el perfil "{nombre_perfil}"')
-        messages.success(request, 'Perfil eliminado correctamente')
+        messages.success(request, 'Perfil eliminado correctamente.')
         return redirect('listar_perfiles')
 
     return render(request, 'th_app/eliminar_perfil.html', {'perfil': perfil})
