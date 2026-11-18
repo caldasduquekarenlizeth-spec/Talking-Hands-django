@@ -2329,3 +2329,8 @@ body {
     gap: 0.65rem;
   }
 }
+
+.logros-summary-box {
+  padding: 0.9rem 1.2rem;
+  border-radius: 14px;
+}

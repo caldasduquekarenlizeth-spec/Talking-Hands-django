@@ -21,6 +21,7 @@ urlpatterns = [
     path('diccionario/', views.diccionario_sennas, name='diccionario_sennas'),
     path('aprendiz/perfil/', views.perfil_y_ranking, name='perfil_y_ranking'),
     path('aprendiz/ranking/', views.ranking, name='ranking'),
+    path('aprendiz/logros/', views.mis_logros, name='mis_logros'),
 
     # ==========================================
     # RUTAS DE ADMINISTRACIÓN (PANEL ADMIN)
