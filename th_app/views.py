@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from .models import Modulo, Leccion, Ejercicio, Senna, Logro, Perfil
+from .models import Modulo, Leccion, Ejercicio, Senna, Logro, Perfil, TipoLogro
 import random
 
 # Create your views here.
@@ -192,13 +192,76 @@ def realizar_leccion(request, leccion_id):
 
 # Función para desbloquear los logros de XP automáticamente
 def verificar_logros(perfil):
-    # Desbloquea logros cuyo requisito de puntos_xp haya sido alcanzado por el aprendiz
-    logros_disponibles = Logro.objects.filter(puntos_xp__lte=perfil.puntos_xp).exclude(
-        id__in=perfil.logros_obtenidos.values_list("id", flat=True)
-    )
-    for logro in logros_disponibles:
-        perfil.logros_obtenidos.add(logro)
+    # Excluir los logros que el usuario ya tiene
+    obtenidos_ids = perfil.logros_obtenidos.values_list("id", flat=True)
+    logros_pendientes = Logro.objects.exclude(id__in=obtenidos_ids)
 
+    # Métricas actuales del aprendiz
+    xp_actual = perfil.puntos_xp
+    lecciones_count = perfil.lecciones_completadas.count()
+    racha_actual = getattr(perfil, "racha_dias", 0)
+    # Señas aprendidas
+    sennas_count = getattr(perfil, "sennas_aprendidas", perfil.lecciones_completadas).count()
+    # Nivel (cada 25 xp sube un nivel)
+    nivel_actual = (xp_actual // 25) + 1
+
+    for logro in logros_pendientes:
+        tipo = (getattr(logro, "tipo", "") or "").lower().strip()
+        # Toma el valor meta del campo numérico que haya en Logro (puntos_xp, meta o requisito)
+        requisito = getattr(logro, "meta", None) or getattr(logro, "puntos_xp", 0)
+        cumple = False
+
+        if tipo in "LECCION":
+            cumple = lecciones_count >= requisito
+        elif tipo == "RACHA":
+            cumple = racha_actual >= requisito
+        elif tipo in ["SEN", "Señas"]:
+            cumple = sennas_count >= requisito
+        elif tipo == ["NIV","Nivel"]:
+            cumple = nivel_actual >= requisito
+        elif tipo == ["DIF","Dificultad"]:
+            # Se desbloquea si alcanza el XP requerido en algunas lecciones
+            cumple = xp_actual >= requisito
+        elif tipo in ["EXP", "Exploracion"]:
+            # Ej: ha visitado el diccionario o completado su primera lección
+            cumple = lecciones_count >= max(1, requisito)
+        else:
+            # Respaldo por defecto: comparación directa por puntos_xp
+            cumple = xp_actual >= logro.puntos_xp
+
+        if cumple:
+            perfil.logros_obtenidos.add(logro)
+
+
+@login_required
+def mis_logros(request):
+    perfil = get_object_or_404(Perfil, usuario=request.user)
+    
+    # Ejecutamos la verificación antes de mostrar para asegurar que estén al día
+    verificar_logros(perfil)
+
+    categoria_actual = request.GET.get("tipo", "").strip()
+    todos_los_logros = Logro.objects.all()
+
+    if categoria_actual:
+        todos_los_logros = todos_los_logros.filter(tipo__iexact=categoria_actual)
+
+    obtenidos_ids = set(perfil.logros_obtenidos.values_list("id", flat=True))
+    total_general = Logro.objects.count()
+    total_obtenidos = len(obtenidos_ids)
+    porcentaje_logros = int((total_obtenidos / total_general) * 100) if total_general > 0 else 0
+
+    context = {
+        "perfil": perfil,
+        "logros": todos_los_logros,
+        "obtenidos_ids": obtenidos_ids,
+        "total_general": total_general,
+        "total_obtenidos": total_obtenidos,
+        "porcentaje_logros": porcentaje_logros,
+        "tipos_choices": TipoLogro.choices,
+        "categoria_actual": categoria_actual,
+    }
+    return render(request, "th_app/aprendiz/logros.html", context)
 
 
 # Función para permitir la búsqueda de señas usando la librería Q

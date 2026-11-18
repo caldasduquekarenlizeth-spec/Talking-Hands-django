@@ -30,7 +30,10 @@
                         <a href="{% url 'diccionario_sennas' %}" class="nav-item {% if request.resolver_match.url_name == 'diccionario_sennas' %}active{% endif %}">Diccionario LSC</a> 
                     </li>
                     <li>
-                        <a href="{% url 'ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'perfil_y_ranking' %}active{% endif %}">Ranking</a>
+                        <a href="{% url 'ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'ranking' %}active{% endif %}">Ranking</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logros' %}" class="nav-item {% if request.resolver_match.url_name == 'logros' %}active{% endif %}">Logros</a>
                     </li>
                 </ul>
 

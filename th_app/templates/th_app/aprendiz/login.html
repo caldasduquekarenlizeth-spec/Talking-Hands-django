@@ -34,7 +34,8 @@
             <label for="id_username">Usuario:</label>
             <input 
             type="text" 
-            name="username" 
+            name="username"
+            placeholder="Ej. carlos_m" 
             id="id_username" 
             required 
             class="form-input"
@@ -47,6 +48,7 @@
                 type="password" 
                 id="id_password" 
                 name="password"
+                placeholder="••••••••" 
                 required 
                 class="form-input"
             >
@@ -54,6 +56,16 @@
 
         <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
     </form>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <div class="auth-footer">
         <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">

@@ -19,6 +19,7 @@ urlpatterns = [
     path("diccionario/", views.diccionario_sennas, name="diccionario_sennas"),
     path("perfil/", views.perfil_y_ranking, name="perfil_y_ranking"),
     path("ranking/", views.ranking, name="ranking"),
+    path('logros/', views.mis_logros, name='logros'),
 ]
 
 if settings.DEBUG:
