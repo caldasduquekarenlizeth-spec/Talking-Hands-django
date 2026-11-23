@@ -135,14 +135,19 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
 MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "smtp.gmail.com",
+            "port": 587,
+            "use_tls": True,
+            "username": "gabrielmeloxvi903@gmail.com",
+            "password": "eaeb jonx kdey haew",
+        }
+    }
 }
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
+DEFAULT_FROM_EMAIL = "Talking Hands <gabrielmeloxvi903@gmail.com>"
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard_aprendiz'

@@ -72,6 +72,29 @@ urlpatterns = [
     path('perfil/auditoria/', views.gestion_auditoria, name='gestion_auditoria'),
     path('perfil/estado-sistema/', views.config_sistema, name='config_sistema'),
     path('ranking/', views.ver_ranking, name='ver_ranking'),
+    
+    
+    # 1. Formulario para ingresar el correo
+    path('recuperar-contrasena/', auth_views.PasswordResetView.as_view(
+        template_name='th_app/password_reset.html',
+        email_template_name='th_app/password_reset_email.html',
+        subject_template_name='th_app/password_reset_subject.txt',
+    ), name='password_reset'),
+
+    # 2. Aviso de correo enviado
+    path('recuperar-contrasena/enviado/', auth_views.PasswordResetDoneView.as_view(
+        template_name='th_app/password_reset_done.html'
+    ), name='password_reset_done'),
+
+    # 3. Formulario para escribir la nueva contraseña (desde el link del correo)
+    path('recuperar-contrasena/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='th_app/password_reset_confirm.html'
+    ), name='password_reset_confirm'),
+
+    # 4. Confirmación final
+    path('recuperar-contrasena/completado/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='th_app/password_reset_complete.html'
+    ), name='password_reset_complete'),
 ]
 
 if settings.DEBUG:
