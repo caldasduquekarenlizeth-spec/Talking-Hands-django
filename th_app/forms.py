@@ -55,6 +55,20 @@ class formsEjercicios(forms.ModelForm):
         self.fields['leccion'].empty_label = "-- Selecciona una Lección --"
         self.fields['opcion_correcta'].empty_label = "-- Selecciona la Seña Correcta --"
 
+    def clean(self):
+        cleaned_data = super().clean()
+        opciones = cleaned_data.get('opciones')
+        opcion_correcta = cleaned_data.get('opcion_correcta')
+
+        if opciones and opcion_correcta:
+            if opcion_correcta not in opciones:
+                self.add_error(
+                    'opcion_correcta',
+                    'La opción correcta debe ser una de las señas seleccionadas en las opciones.'
+                )
+
+        return cleaned_data
+
 CATEGORIAS_SENNA = [
     ('', '-- Selecciona una categoría --'),
     ('Alfabeto', 'Alfabeto'),

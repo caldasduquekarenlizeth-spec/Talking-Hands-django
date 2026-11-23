@@ -61,14 +61,6 @@ class Ejercicio(models.Model):
     def __str__(self):
         return f"{self.pregunta} ({self.leccion.nombre})"
 
-    def clean(self):
-        super().clean()
-        if self.pk and self.opcion_correcta:
-            if not self.opciones.filter(pk=self.opcion_correcta.pk).exists():
-                raise ValidationError({
-                    'opcion_correcta': 'La opción correcta debe ser una de las señas seleccionadas en las opciones.'
-                })
-
 
 class TipoLogro(models.TextChoices):
     LECCION = "LEC", "Leccion"

@@ -692,8 +692,8 @@ def dashboard_aprendiz(request):
 @login_required
 def ranking(request):
     if es_administrador(request.user):
-        return redirect("ver_ranking")
-    ranking = Perfil.objects.order_by("-puntos_xp")
+        return redirect("clasificacion_admin")
+    ranking = Perfil.objects.filter(rol='APRENDIZ').order_by("-puntos_xp", "nombre")
 
     context = {
         "ranking": ranking,
@@ -877,7 +877,7 @@ def perfil_y_ranking(request):
     perfil = get_object_or_404(Perfil, usuario=request.user)
     todos_los_logros = Logro.objects.all()
     logros_desbloqueados_ids = perfil.logros_obtenidos.values_list("id", flat=True)
-    ranking = Perfil.objects.order_by("-puntos_xp")[:10]
+    ranking = Perfil.objects.filter(rol='APRENDIZ').order_by("-puntos_xp", "nombre")[:10]
 
     context = {
         "perfil": perfil,
