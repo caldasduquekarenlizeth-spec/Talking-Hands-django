@@ -16,9 +16,9 @@ urlpatterns = [
     # ==========================================
     # RUTAS DEL APRENDIZ
     # ==========================================
-    path('accounts/profile/', views.dashboard_aprendiz, name='dashboard_aprendiz'),
-    path('leccion/<int:leccion_id>/', views.realizar_leccion, name='realizar_leccion'),
-    path('diccionario/', views.diccionario_sennas, name='diccionario_sennas'),
+    path('aprendiz/inicio/', views.dashboard_aprendiz, name='dashboard_aprendiz'),
+    path('aprendiz/leccion/<int:leccion_id>/', views.realizar_leccion, name='realizar_leccion'),
+    path('aprendiz/diccionario/', views.diccionario_sennas, name='diccionario_sennas'),
     path('aprendiz/perfil/', views.perfil_y_ranking, name='perfil_y_ranking'),
     path('aprendiz/ranking/', views.ranking, name='ranking'),
     path('aprendiz/logros/', views.mis_logros, name='mis_logros'),

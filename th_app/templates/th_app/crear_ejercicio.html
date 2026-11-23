@@ -45,10 +45,19 @@
             </div>
 
             <div class="grupo-campo">
-                <label for="{{ form.respuesta_correcta.id_for_label }}">Respuesta Correcta</label>
-                {{ form.respuesta_correcta }}
-                {% if form.respuesta_correcta.errors %}
-                    <span class="error-texto">{{ form.respuesta_correcta.errors.0 }}</span>
+                <label for="{{ form.opciones.id_for_label }}">Opciones de Respuesta (Señas)</label>
+                {{ form.opciones }}
+                <small style="color: #64748b; font-size: 0.8rem;">Mantén presionada la tecla Ctrl (o Cmd) para seleccionar varias señas.</small>
+                {% if form.opciones.errors %}
+                    <span class="error-texto">{{ form.opciones.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.opcion_correcta.id_for_label }}">Respuesta Correcta</label>
+                {{ form.opcion_correcta }}
+                {% if form.opcion_correcta.errors %}
+                    <span class="error-texto">{{ form.opcion_correcta.errors.0 }}</span>
                 {% endif %}
             </div>
 

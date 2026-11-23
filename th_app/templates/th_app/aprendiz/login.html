@@ -17,16 +17,6 @@
         <h2 class="auth-title">Iniciar Sesión</h2>
     </div>
 
-    {% if messages %}
-      <div class="messages-container">
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
     <form method="POST" class="auth-form">
         {% csrf_token %}
         
@@ -56,16 +46,6 @@
 
         <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
     </form>
-
-    {% if messages %}
-        <div class="messages-container">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
 
     <div class="auth-footer">
         <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">

@@ -8,6 +8,7 @@ from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
 
 from .models import Perfil, Modulo, Leccion, Ejercicio, Senna, Logro, ActividadAdmin, TipoLogro
@@ -20,8 +21,6 @@ from .forms import (
     formsLogros,
     formsEditarPerfilPropio,
 )
-from django.contrib.auth.models import User, Group
-from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 def es_administrador(user):

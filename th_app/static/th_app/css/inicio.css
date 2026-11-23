@@ -202,6 +202,24 @@ html, body {
     border-color: #86efac;
 }
 
+.btn-logout {
+    background-color: transparent;
+    border: 1px solid #e2e8f0;
+    color: var(--text_secundario);
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #dc2626;
+}
+
 .punto-notif-nav {
     position: absolute;
     top: 7px;

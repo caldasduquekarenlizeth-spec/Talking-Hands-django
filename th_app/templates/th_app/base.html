@@ -7,8 +7,8 @@
     <title>{% block title %}Talking Hands{% endblock %}</title>
     <meta name="description" content="Plataforma interactiva para aprender lengua de señas.">
 
-    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema clasificacion_admin' %}
-        <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+    {% if user.is_authenticated and user.is_staff and not '/aprendiz/' in request.path %}
+        <link rel="stylesheet" href="{% static 'th_app/css/inicio.css' %}">
     {% else %}
         <link rel="stylesheet" href="{% static 'th_app/css/styles.css' %}">
     {% endif %}
@@ -16,13 +16,13 @@
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="{% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema clasificacion_admin' %}layout-body{% endif %}">
+<body class="{% if user.is_authenticated and user.is_staff and not '/aprendiz/' in request.path %}layout-body{% endif %}">
 
-    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema clasificacion_admin' %}
+    {% if user.is_authenticated and user.is_staff and not '/aprendiz/' in request.path %}
         <!-- NAVBAR ADMIN -->
         <header class="header-navbar">
             <div class="marca">
-                <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
+                <img src="{% static 'th_app/images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo" />
                 <span>Talking Hands</span>
             </div>
 
@@ -65,6 +65,7 @@
                         {% endfor %}
                         <a href="{% url 'ver_perfil' %}" class="dropdown-notif-footer">Ver historial completo →</a>
                     </div>
+                    
                 </div>
 
                 <a href="{% url 'ver_perfil' %}" class="avatar-nav-perfil" title="Ir a mi perfil">
@@ -75,11 +76,9 @@
                     {% endif %}
                 </a>
 
-                <form action="{% url 'logout' %}" method="POST" style="margin: 0;">
+                <form action="{% url 'logout' %}" method="POST" class="logout-form">
                     {% csrf_token %}
-                    <button type="submit" title="Cerrar sesión" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 6px 12px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                        Salir
-                    </button>
+                    <button type="submit" class="btn-logout" title="Cerrar sesión">Salir</button>
                 </form>
             </div>
         </header>
@@ -99,7 +98,7 @@
                         <ul class="nav-links">
                             <li><a href="{% url 'dashboard_aprendiz' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard_aprendiz' %}active{% endif %}">Ruta</a></li>
                             <li><a href="{% url 'diccionario_sennas' %}" class="nav-item {% if request.resolver_match.url_name == 'diccionario_sennas' %}active{% endif %}">Diccionario LSC</a></li>
-                            <li><a href="{% url 'ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'ranking' %}active{% endif %}">Ranking</a></li>
+                            <li><a href="{% url 'ranking' %}" class="nav-item {% if request.resolver_match.url_name == 'ranking' %}active{% endif %}">Ranking</a></li> 
                             <li><a href="{% url 'mis_logros' %}" class="nav-item {% if request.resolver_match.url_name == 'mis_logros' %}active{% endif %}">Logros</a></li>
                         </ul>
 
@@ -140,13 +139,13 @@
         <!-- ÚNICO BLOQUE DE CONTENIDO -->
         {% block content %}{% endblock %}
 
-    {% if request.resolver_match.url_name in 'panel_admin dashboard listar_perfiles crear_perfil editar_perfil eliminar_perfil listar_modulos crear_modulo editar_modulo eliminar_modulo ver_lecciones crear_leccion editar_leccion eliminar_leccion ver_ejercicios crear_ejercicio editar_ejercicio eliminar_ejercicio listar_sennas crear_senna editar_senna eliminar_senna listar_logros crear_logro editar_logro eliminar_logro ver_perfil editar_perfil_propio cambiar_contrasena gestion_auditoria config_sistema clasificacion_admin' %}
+    {% if user.is_authenticated and user.is_staff and not '/aprendiz/' in request.path %}
         </div>
         <footer class="footer-landing">
             <div class="contenedor-footer">
                 <div class="columna-footer-marca">
                     <div class="marca-footer">
-                        <img src="{% static 'images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo-footer" />
+                        <img src="{% static 'th_app/images/logo_th.svg' %}" alt="Logo Talking Hands" class="logo-footer" />
                         <span>Talking <strong>Hands</strong></span>
                     </div>
                     <p>Facilitando el acceso a la Lengua de Señas Colombiana a través de la educación lúdica, accesible y gratuita.</p>
