@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class Modulo(models.Model):
@@ -111,9 +112,29 @@ class Perfil(models.Model):
     foto = models.ImageField(upload_to='perfiles/', null=True, blank=True)
     lecciones_completadas = models.ManyToManyField(Leccion, blank=True)
     logros_obtenidos = models.ManyToManyField(Logro, blank=True)
+    xp_diario = models.IntegerField(default=0)
+    fecha_ultimo_xp = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre or self.usuario} - {self.puntos_xp}XP"
+    
+    def obtener_xp_hoy(self):
+        """Retorna el XP ganado hoy. Y reinicia la cuenta al cambiar el día"""
+        hoy = timezone.localdate()
+        if self.fecha_ultimo_xp != hoy:
+            return 0
+        return self.xp_diario
+    
+    def sumar_xp(self, cantidad):
+        """Suma XP total y XP diario"""
+        hoy = timezone.localdate()
+        if self.fecha_ultimo_xp != hoy:
+            self.xp_diario = 0
+            self.fecha_ultimo_xp = hoy
+        
+        self.puntos_xp += cantidad
+        self.xp_diario += cantidad
+        self.save(update_fields=['puntos_xp', 'xp_diario', 'fecha_ultimo_xp'])
 
 
 class ActividadAdmin(models.Model):

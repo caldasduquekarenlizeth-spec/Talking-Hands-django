@@ -107,11 +107,19 @@
 
     <!-- Columna Lateral Derecha -->
     <aside class="learn-sidebar">
-      <!-- Widget Meta Diaria -->
+      <!-- META XP DIARIA -->
       <section class="sidebar-widget">
-        <div class="widget-header">
-          <h4 class="widget-title">Meta diaria</h4>
-          <span class="widget-goal-count">30 / 50 XP</span>
+        <div class="sidebar-widget">
+          <div class="widget-header">
+            <h3 class="widget-title">🎯 Meta Diaria</h3>
+            <span class="widget-goal-count">{{ xp_hoy }} / {{ meta_diaria }} XP</span>
+          </div>
+          <div class="progress-bar-track daily-track">
+            <div class="progress-bar-fill" style="width: {{ porcentaje_meta }}%;"></div>
+          </div>
+          <p class="widget-hint">
+            Completa ejercicios hoy para alcanzar tu meta diaria de {{ meta_diaria }} XP.
+          </p>
         </div>
         
         <div class="progress-bar-track daily-track">
@@ -121,36 +129,38 @@
         <p class="widget-hint">¡Completa una lección de 20 XP hoy para alcanzar tu meta diaria!</p>
       </section>
 
-      <!-- Widget Liga Bronce (Top 3) -->
-      <section class="sidebar-widget">
-        <div class="widget-header clickable">
-          <h4 class="widget-title">Ranking global (Top 3)</h4>
-          <a href="{% url 'ranking' %}" class="widget-arrow" style="text-decoration: none;">›</a>
+      <!-- RANKING -->
+      <div class="sidebar-widget">
+        <div class="widget-header">
+          <h3 class="widget-title">🏆 Top 3 Aprendices</h3>
+          <a href="{% url 'ranking' %}" class="widget-arrow" title="Ver ranking completo">→</a>
         </div>
 
         <ul class="ranking-list">
-          {% for item in ranking %}
-            <li class="ranking-item ranking-row {% if item.usuario == request.user %}is-me{% endif %}">
-              <span class="rank-pos {% if forloop.counter <= 3 %}top-{{ forloop.counter }}{% endif %}">
+          {% for item in top_ranking %}
+            <li class="ranking-item ranking-row {% if item.usuario == request.user %}is-me{% endif %}" style="padding: 0.55rem 0.75rem;">
+              <span class="rank-pos" style="width: 24px; font-size: 0.9rem;">
                 {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}{{ forloop.counter }}{% endif %}
               </span>
-              
-              <div class="rank-user-avatar">
-                {{ item.usuario.username|slice:":1"|upper }}
+
+              <div class="rank-user-avatar" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                {{ item.nombre|default:item.usuario.username|slice:":1"|upper }}
               </div>
 
-              <span class="rank-name" style="font-weight: {% if item.usuario == request.user %}700{% else %}500{% endif %}; color: #1e293b;">
-                {{ item.usuario.username }}
-                {% if item.usuario == request.user %}<small style="color: var(--verde_oscuro);">(Tú)</small>{% endif %}
+              <span class="rank-name {% if item.usuario == request.user %}is-me-text{% endif %}" style="font-size: 0.86rem;">
+                {{ item.nombre|default:item.usuario.username }}
+                {% if item.usuario == request.user %}
+                  <span class="you-pill">Tú</span>
+                {% endif %}
               </span>
 
-              <span class="rank-xp">{{ item.puntos_xp }} XP</span>
+              <span class="rank-xp" style="font-size: 0.84rem;">{{ item.puntos_xp }} XP</span>
             </li>
           {% empty %}
-            <li class="widget-hint">Aún no hay aprendices en el ranking.</li>
+            <li class="empty-state">Sin participantes aún.</li>
           {% endfor %}
         </ul>
-      </section>
+      </div>
     </aside>
 
   </div>

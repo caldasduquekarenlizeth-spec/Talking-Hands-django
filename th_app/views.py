@@ -57,6 +57,23 @@ def registrar_actividad(accion, entidad, detalle, perfil=None):
         detalle=detalle
     )
 
+# ==========================================
+# CONSULTA GENERAL RANKING
+# ==========================================
+def obtener_ranking_aprendices():
+    return (
+        Perfil.objects.select_related('usuario')
+        .filter(
+            rol='APRENDIZ',
+            usuario__isnull=False,
+            usuario__is_active=True,
+            usuario__is_staff=False,
+            usuario__is_superuser=False,
+        )
+        .exclude(Q(nombre__isnull=True) | Q(nombre__exact=''))
+        .order_by('-puntos_xp', 'id')
+    )
+
 
 # ==========================================
 # VISTAS PÚBLICAS Y AUTENTICACIÓN
@@ -601,7 +618,7 @@ def config_sistema(request):
 
 @solo_admin
 def ver_ranking(request):
-    aprendices = Perfil.objects.filter(rol='APRENDIZ').order_by('-puntos_xp', 'nombre')
+    aprendices = obtener_ranking_aprendices()
 
     return render(request, 'th_app/ranking.html', {
         'aprendices': aprendices,
@@ -629,7 +646,13 @@ def dashboard_aprendiz(request):
     )
 
     # Filtramos solo aprendices para que los administradores no aparezcan en el podio
-    ranking = Perfil.objects.filter(rol="APRENDIZ").order_by("-puntos_xp")[:10]
+    top_ranking = obtener_ranking_aprendices()[:3]
+
+    meta_diaria = 50
+    xp_hoy = perfil.obtener_xp_hoy()
+    porcentaje_meta = min(int((xp_hoy / meta_diaria) * 100), 100) if meta_diaria > 0 else 0
+    
+    
     modulos = Modulo.objects.all()
     completadas_ids = set(perfil.lecciones_completadas.values_list("id", flat=True))
 
@@ -668,21 +691,24 @@ def dashboard_aprendiz(request):
         "perfil": perfil,
         "modulos_ruta": modulos_ruta,
         "lecciones_completadas_ids": list(completadas_ids),
-        "ranking": ranking,
+        "top_ranking": top_ranking,
+        "meta_diaria": meta_diaria,
+        "xp_hoy": xp_hoy,
+        "porcentaje_meta":porcentaje_meta,
     }
     return render(request, "th_app/aprendiz/dashboard.html", context)
 
 @login_required
 def ranking(request):
-    if es_administrador(request.user):
-        return redirect("ver_ranking")
-    ranking = Perfil.objects.order_by("-puntos_xp")
-
+    perfil = get_object_or_404(Perfil, usuario=request.user)
+    lista_ranking = obtener_ranking_aprendices()
+    
     context = {
-        "ranking": ranking,
+        "perfil": perfil,
+        "ranking": lista_ranking,
+        "aprendices": lista_ranking,
     }
     return render(request, "th_app/aprendiz/ranking.html", context)
-
 
 @login_required
 def realizar_leccion(request, leccion_id):
@@ -717,14 +743,12 @@ def realizar_leccion(request, leccion_id):
         if aprobado:
             puntos_base = getattr(leccion, 'puntos_xp', 20)
             if not perfil.lecciones_completadas.filter(id=leccion.id).exists():
-                perfil.puntos_xp += puntos_base
                 perfil.lecciones_completadas.add(leccion)
                 xp_ganado = puntos_base
             else:
-                perfil.puntos_xp += 5
                 xp_ganado = 5
 
-            perfil.save()
+            perfil.sumar_xp(xp_ganado)
             verificar_logros(perfil)
 
         context_resultado = {
@@ -860,7 +884,7 @@ def perfil_y_ranking(request):
     perfil = get_object_or_404(Perfil, usuario=request.user)
     todos_los_logros = Logro.objects.all()
     logros_desbloqueados_ids = perfil.logros_obtenidos.values_list("id", flat=True)
-    ranking = Perfil.objects.order_by("-puntos_xp")[:10]
+    ranking = obtener_ranking_aprendices()[:10]
 
     context = {
         "perfil": perfil,

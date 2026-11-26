@@ -87,21 +87,22 @@
           <h3 class="widget-title" style="font-size: 1.1rem;">🏆 Top 10 Aprendices</h3>
           <span class="widget-goal-count">Liga LSC</span>
         </div>
-
         <ul class="ranking-list">
           {% for item in ranking %}
-            <li class="ranking-item ranking-row {% if item.usuario == request.user %}is-me{% endif %}">
+            <li class="ranking-item ranking-row {% if forloop.counter == 1 %}podium-1{% elif forloop.counter == 2 %}podium-2{% elif forloop.counter == 3 %}podium-3{% endif %} {% if item.usuario == request.user %}is-me{% endif %}">
               <span class="rank-pos {% if forloop.counter <= 3 %}top-{{ forloop.counter }}{% endif %}">
                 {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}{{ forloop.counter }}{% endif %}
               </span>
               
               <div class="rank-user-avatar">
-                {{ item.usuario.username|slice:":1"|upper }}
+                {{ item.nombre|default:item.usuario.username|slice:":1"|upper }}
               </div>
 
-              <span class="rank-name" style="font-weight: {% if item.usuario == request.user %}700{% else %}500{% endif %}; color: #1e293b;">
-                {{ item.usuario.username }}
-                {% if item.usuario == request.user %}<small style="color: var(--verde_oscuro);">(Tú)</small>{% endif %}
+              <span class="rank-name {% if item.usuario == request.user %}is-me-text{% endif %}">
+                {{ item.nombre|default:item.usuario.username }}
+                {% if item.usuario == request.user %}
+                  <span class="you-pill">Tú</span>
+                {% endif %}
               </span>
 
               <span class="rank-xp">{{ item.puntos_xp }} XP</span>
@@ -112,7 +113,6 @@
         </ul>
       </section>
     </aside>
-
   </div>
 </div>
 {% endblock %}

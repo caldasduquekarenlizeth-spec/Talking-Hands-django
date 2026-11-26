@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -141,13 +143,13 @@ MAILERS = {
             "host": "smtp.gmail.com",
             "port": 587,
             "use_tls": True,
-            "username": os.environ.get("EMAIL_HOST_USER", ""),
-            "password": os.environ.get("EMAIL_HOST_PASSWORD", ""),
+            "username": os.environ.get("EMAIL_HOST_USER"),
+            "password": os.environ.get("EMAIL_HOST_PASSWORD"),
         }
     }
 }
 
-DEFAULT_FROM_EMAIL = "Talking Hands <gabrielmeloxvi903@gmail.com>"
+DEFAULT_FROM_EMAIL = "Talking Hands <talkinghands12@gmail.com>"
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard_aprendiz'

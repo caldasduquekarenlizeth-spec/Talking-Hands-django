@@ -24,31 +24,32 @@
 
       <ul class="ranking-list">
         {% for item in ranking %}
-          <li class="ranking-item ranking-row {% if item.usuario == request.user %}is-me{% endif %} {% if forloop.counter <= 3 %}podium-row podium-{{ forloop.counter }}{% endif %}">
+          <li class="ranking-row {% if forloop.counter == 1 %}podium-1{% elif forloop.counter == 2 %}podium-2{% elif forloop.counter == 3 %}podium-3{% endif %} {% if item.usuario == request.user %}is-me{% endif %}">
             
-            <span class="rank-pos {% if forloop.counter <= 3 %}top-{{ forloop.counter }}{% endif %}">
+            <!-- Posición consistente con desempate por ID -->
+            <span class="rank-pos">
               {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}#{{ forloop.counter }}{% endif %}
             </span>
-            
+
+            <!-- Avatar con inicial segura -->
             <div class="rank-user-avatar">
-              {{ item.usuario.username|slice:":1"|upper }}
+              {{ item.nombre|default:item.usuario.username|slice:":1"|upper }}
             </div>
 
+            <!-- Nombre seguro -->
             <div class="rank-user-meta">
               <span class="rank-name {% if item.usuario == request.user %}is-me-text{% endif %}">
-                {{ item.usuario.username }}
+                {{ item.nombre|default:item.usuario.username }}
                 {% if item.usuario == request.user %}
                   <span class="you-pill">Tú</span>
                 {% endif %}
               </span>
             </div>
 
-            <span class="rank-xp-badge">⚡ {{ item.puntos_xp }} XP</span>
+            <span class="rank-xp-badge">{{ item.puntos_xp }} XP</span>
           </li>
         {% empty %}
-          <li class="widget-hint" style="text-align: center; padding: 2.5rem 1rem;">
-            Aún no hay aprendices registrados en el ranking.
-          </li>
+          <p class="empty-state">Aún no hay aprendices en el ranking.</p>
         {% endfor %}
       </ul>
     </section>
