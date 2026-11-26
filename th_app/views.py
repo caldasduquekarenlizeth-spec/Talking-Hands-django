@@ -1,17 +1,18 @@
-import csv
-import random
-from django.db import models
+import csv, re, random
+from django.db import models, transaction
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.db.models import Sum, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth import login, update_session_auth_hash, logout
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
-
 from .models import Perfil, Modulo, Leccion, Ejercicio, Senna, Logro, ActividadAdmin, TipoLogro
+from django.contrib.auth.password_validation import validate_password
 from .forms import (
     formsPerfiles,
     formsModulos,
@@ -69,32 +70,86 @@ def inicio(request):
 
 def registro_aprendiz(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        username = (request.POST.get("username") or "").strip()
+        email = (request.POST.get("email") or "").strip().lower()
+        password = request.POST.get("password") or ""
 
-        if User.objects.filter(username=username).exists():
+        # 1. Validar Usuario (Username): 5-25 chars, alfanumérico + '_', no solo números
+        if not (5 <= len(username) <= 25):
+            messages.error(request, "El usuario debe tener entre 5 y 25 caracteres.")
+            return redirect("registro")
+        if not re.match(r"^[a-zA-Z0-9_]+$", username) or username.isdigit():
+            messages.error(request, "El usuario solo puede contener letras, números y guion bajo (_), y no puede ser únicamente numérico.")
+            return redirect("registro")
+        if User.objects.filter(username__iexact=username).exists():
             messages.error(request, "Ese nombre de usuario ya está en uso.")
             return redirect("registro")
 
-        user = User.objects.create_user(username=username, email=email, password=password)
-        grupo_aprendiz, _ = Group.objects.get_or_create(name='Aprendiz')
-        user.groups.add(grupo_aprendiz)
+        # 2. Validar Correo electrónico: obligatorio, formato válido y único
+        if not email:
+            messages.error(request, "El correo electrónico es obligatorio.")
+            return redirect("registro")
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, "Ingresa un correo electrónico válido.")
+            return redirect("registro")
+        if User.objects.filter(email__iexact=email).exists() or Perfil.objects.filter(email__iexact=email).exists():
+            messages.error(request, "Ese correo electrónico ya está registrado.")
+            return redirect("registro")
 
-        Perfil.objects.create(
-            usuario=user,
-            nombre=username[:25],
-            email=email,
-            puntos_xp=0,
-            rol='APRENDIZ'
-        )
+        # 3. Validar Contraseña: 6-25 chars, 1 mayúscula, 1 minúscula, 1 número y 1 carácter especial
+        if not (6 <= len(password) <= 25):
+            messages.error(request, "La contraseña debe tener entre 6 y 25 caracteres.")
+            return redirect("registro")
+        if (not re.search(r"[A-Z]", password) or
+            not re.search(r"[a-z]", password) or
+            not re.search(r"\d", password) or
+            not re.search(r"[^a-zA-Z0-9]", password)):
+            messages.error(request, "La contraseña debe incluir al menos una mayúscula, una minúscula, un número y un carácter especial.")
+            return redirect("registro")
+        
+        # 3b. Bloquear secuencias obvias y palabras comunes
+        secuencias_prohibidas = ['12345', '123456', 'qwerty', 'asdfgh', 'abcde', 'password', 'contrasena', 'admin', 'talkinghands']
+        if any(seq in password.lower() for seq in secuencias_prohibidas):
+            messages.error(request, "La contraseña contiene secuencias o palabras demasiado predecibles (ej. 123456, qwerty).")
+            return redirect("registro")
+
+        # 3c. Ejecutar los validadores oficiales de seguridad de Django (lista de contraseñas comunes y similitud con usuario/correo)
+        try:
+            usuario_temporal = User(username=username, email=email)
+            validate_password(password, user=usuario_temporal)
+        except ValidationError as e:
+            for error in e.messages:
+                messages.error(request, error)
+            return redirect("registro")
+        
+        # 4. Creación atómica de User + Grupo + Perfil
+        with transaction.atomic():
+            user = User.objects.create_user(username=username, email=email, password=password)
+            grupo_aprendiz, _ = Group.objects.get_or_create(name='Aprendiz')
+            user.groups.add(grupo_aprendiz)
+
+            Perfil.objects.create(
+                usuario=user,
+                nombre=username,
+                email=email,
+                puntos_xp=0,
+                rol='APRENDIZ'
+            )
 
         login(request, user)
-        messages.success(request, f"¡Bienvenido {username}! Ya puedes empezar a aprender lengua de señas colombiana.")
+        messages.success(request, f"¡Bienvenido {username}! Ya puedes empezar a aprender Lengua de Señas Colombiana.")
         return redirect("dashboard_aprendiz")
 
     return render(request, "th_app/aprendiz/register.html")
 
+
+def cerrar_sesion(request):
+    # Consumir y limpiar cualquier mensaje pendiente antes de cerrar sesión
+    list(messages.get_messages(request))
+    logout(request)
+    return redirect('login')
 
 # ==========================================
 # VISTAS DE ADMINISTRACIÓN (PANEL ADMIN)

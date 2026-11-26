@@ -62,6 +62,11 @@
     </div>
   </div>
 
+<!-- Contenedor de Pista -->
+<div class="hint-banner" style="display: none; background: #fef9c3; border: 1px solid #fde047; color: #854d0e; padding: 0.85rem 1rem; border-radius: 10px; margin-top: 1rem; font-size: 0.95rem;">
+  <strong>💡 Pista:</strong> {{ ejercicio.opcion_correcta.pista|default:ejercicio.opcion_correcta.descripcion|default:"Observa atentamente la posición de los dedos y la palma en la imagen." }}
+</div>
+
 <!-- Contenedor del mensaje de respuesta (Correcto / Incorrecto) -->
   <div class="feedback-banner" style="display: none;">
     <div class="feedback-content">
@@ -117,6 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackIcon = step.querySelector('.feedback-icon');
     const feedbackTitle = step.querySelector('.feedback-title');
     const feedbackSubtitle = step.querySelector('.feedback-subtitle');
+    const hintBtn = step.querySelector('.quiz-hint-btn');
+    const hintBanner = step.querySelector('.hint-banner');
+    if (hintBtn && hintBanner) {
+      hintBtn.addEventListener('click', () => {
+        const visible = hintBanner.style.display === 'block';
+        hintBanner.style.display = visible ? 'none' : 'block';
+      });
+    }
     let verificado = false;
 
     checkBtn.addEventListener('click', () => {

@@ -82,15 +82,20 @@ CATEGORIAS_SENNA = [
 class formsSennas(forms.ModelForm):
     class Meta:
         model = Senna
-        fields = ['nombre', 'descripcion', 'imagen', 'categoria']
+        fields = ['nombre', 'descripcion', 'imagen', 'categoria', 'pista']
         labels = {
             'nombre': 'Nombre / Palabra de la Seña',
             'descripcion': 'Descripción o Instrucción',
             'imagen': 'Imagen de la Seña',
             'categoria': 'Categoría',
+            'pista': 'pista',
         }
         widgets = {
+            'pista': forms.TextInput(attrs={
+                'placeholder': 'Ej. Es la primera vocal y se hace con el puño cerrado y el pulgar al lado.'
+            }),
             'categoria': forms.Select(choices=CATEGORIAS_SENNA),
+
         }
 
 class formsLogros(forms.ModelForm):

@@ -24,6 +24,7 @@ class Leccion(models.Model):
 class Senna(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField()
+    pista = models.CharField(max_length=50, blank=True, null=True)
     imagen = models.ImageField(upload_to="sennas/")
     categoria = models.TextField()
 

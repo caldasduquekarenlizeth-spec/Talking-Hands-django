@@ -19,16 +19,6 @@
       <p class="auth-subtitle">Aprende Lengua de Señas Colombiana a tu propio ritmo</p>
     </div>
 
-    <!-- Mensajes de Django (ej. "Ese nombre de usuario ya está en uso") -->
-    {% if messages %}
-      <div class="messages-container">
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-          </div> 
-        {% endfor %}
-      </div>
-    {% endif %}
 
     <!-- Formulario POST con CSRF Token -->
     <form method="POST" action="" class="auth-form" novalidate>

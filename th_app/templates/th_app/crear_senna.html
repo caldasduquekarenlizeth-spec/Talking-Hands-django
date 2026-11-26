@@ -60,6 +60,14 @@
                 {% endif %}
             </div>
 
+            <div class="grupo-campo">
+                <label for="{{ form.pista.id_for_label }}">Pista para el ejercicio (Opcional)</label>
+                {{ form.pista }}
+                {% if form.pista.errors %}
+                    <span class="error-texto">{{ form.pista.errors.0 }}</span>
+                {% endif %}
+            </div>
+
             <div class="acciones-formulario">
                 <a href="{% url 'listar_sennas' %}" class="btn-cancelar">Cancelar</a>
                 <button type="submit" class="btn-guardar">Guardar Seña</button>
